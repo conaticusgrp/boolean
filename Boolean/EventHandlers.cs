@@ -1,11 +1,13 @@
 using Discord;
 using Discord.Commands;
+using Discord.Interactions;
+using Discord.WebSocket;
 
 namespace Boolean;
 
-public static class EventHandlers
+public class EventHandlers(IServiceProvider serviceProvider, BotConfig config, DiscordSocketClient client, InteractionService interactionService)
 {
-   public static Task LogMessage(LogMessage message)
+    public Task LogMessage(LogMessage message)
    {
        if (message.Exception is CommandException exception) {
             Console.WriteLine($"[Command/{message.Severity}] {exception.Command.Aliases.First()} " 
@@ -16,5 +18,20 @@ public static class EventHandlers
         
        Console.WriteLine($"[General/{message.Severity}] {message}");
        return Task.CompletedTask;
+   }
+
+   public Task Ready()
+   {
+        #if DEBUG
+            return interactionService.RegisterCommandsToGuildAsync(config.TestGuildId);
+        #else
+            return interactionService.RegisterCommandsGloballyAsync();
+        #endif
+   }
+
+   public Task InteractionCreated(SocketInteraction interaction)
+   {
+       var ctx = new SocketInteractionContext(client, interaction);
+       return interactionService.ExecuteCommandAsync(ctx, serviceProvider);
    }
 }
