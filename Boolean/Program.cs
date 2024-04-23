@@ -12,7 +12,6 @@ class Program
     private static DiscordSocketClient _client;
     private static BotConfig _config;
     private static InteractionService _interactionService;
-    private static EventHandlers _eventHandlers;
 
     static IServiceProvider CreateServices()
     {
