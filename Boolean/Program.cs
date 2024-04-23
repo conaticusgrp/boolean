@@ -19,14 +19,13 @@ class Program
         _client = new DiscordSocketClient();
         _config = new BotConfig();
         _interactionService = new InteractionService(_client.Rest);
-        
+
         var collection = new ServiceCollection()
             .AddSingleton(_interactionService)
             .AddSingleton(_client)
             .AddSingleton(_config)
             .AddSingleton<DiscordSocketConfig>()
-            .AddSingleton<EventHandlers>()
-            .AddSingleton<Commands>();
+            .AddSingleton<EventHandlers>();
         
         return collection.BuildServiceProvider();
     }
