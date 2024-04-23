@@ -3,7 +3,7 @@ using Discord.WebSocket;
 
 namespace Boolean;
 
-public class Bot
+public static class Bot
 {
     private static DiscordSocketClient _client;
     private static BotConfig _config;
@@ -13,17 +13,16 @@ public class Bot
         _client = new DiscordSocketClient();
         _config = new BotConfig();
         
-        _client.Log += Log;
+        AttachEventHandlers();
 
         await _client.LoginAsync(TokenType.Bot, _config.Token);
         await _client.StartAsync();
 
         await Task.Delay(-1);
     }
-    
-    private static Task Log(LogMessage msg)
+
+    private static void AttachEventHandlers()
     {
-        Console.WriteLine(msg.ToString());
-        return Task.CompletedTask;
+        _client.Log += EventHandlers.LogMessage;
     }
 }
