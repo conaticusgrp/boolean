@@ -3,7 +3,7 @@
 Hello and thank you for checking out the contributing guidelines for Boolean! Please read these carefully before contributing.
 
 ## Issues
-All tasks for the project are listed in the repo's [issues](https://github.com/conaticusgrp/boolean-revamp). Feel free to work on any issue that does not have an assignee. There is no guarantee this issue has not already been worked on - it's good to check the PRs page first.
+All tasks for the project are listed in the repo's [issues](https://github.com/conaticusgrp/boolean-revamp/issues). Feel free to work on any issue that does not have an assignee. There is no guarantee this issue has not already been worked on - it's good to check the PRs page first.
 
 ## Code Style
 For this project we will be using common C# coding conventions. Please follow these as much as possible to keep our codebase consistent and readable.
@@ -84,6 +84,8 @@ Please do:
 - Mention any new packages added and their purpose in the PR description
 - Write well thought-out code that is easy to read
 - Use meaningful commit messages
+- Test your code thoroughly and handle all possible errors/misinputs
+- Base PRs on the develop branch and not the main branch, as this is where contributed code will go before testing
 
 Please don't:
 - Add forked packages that are not by the official creator
