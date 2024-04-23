@@ -1,3 +1,4 @@
+using Discord;
 using Microsoft.Extensions.Configuration;
 
 namespace Boolean;
@@ -5,6 +6,8 @@ namespace Boolean;
 public class BotConfig
 {
     public readonly string? Token;
+    public readonly Color BotTheme = Color.Gold;
+    
     #if DEBUG
         public readonly ulong TestGuildId;
     #endif
