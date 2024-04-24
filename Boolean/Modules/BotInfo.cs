@@ -17,4 +17,16 @@ public class BotInfo(DiscordSocketClient client, BotConfig config) : Interaction
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
+    
+    [SlashCommand("ping", "Gets the current client latency.")]
+    public async Task Ping()
+    {
+        var embed = new EmbedBuilder()
+        {
+            Title = "Ping",
+            Description = $"Pong. Took **{client.Latency}ms** to respond."
+        }.WithColor(config.BotTheme);
+        
+        await RespondAsync(embed: embed.Build(), ephemeral: true);
+    }
 }
