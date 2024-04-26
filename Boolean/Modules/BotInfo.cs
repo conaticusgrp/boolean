@@ -9,7 +9,7 @@ public class BotInfo(DiscordSocketClient client, BotConfig config) : Interaction
     [SlashCommand("guilds", "Gets the number of servers the bot is in.")]
     public async Task Guilds()
     {
-        var embed = new EmbedBuilder()
+        var embed = new EmbedBuilder
         {
             Title = "Guilds",
             Description = $"I am currently in **{client.Guilds.Count}** guilds."
@@ -21,7 +21,7 @@ public class BotInfo(DiscordSocketClient client, BotConfig config) : Interaction
     [SlashCommand("ping", "Gets the current client latency.")]
     public async Task Ping()
     {
-        var embed = new EmbedBuilder()
+        var embed = new EmbedBuilder
         {
             Title = "Ping",
             Description = $"Pong. Took **{client.Latency}ms** to respond."
