@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # Secrets.json
 Boolean/secrets.json
+
+# The compiled code
+out
