@@ -15,7 +15,7 @@ public class BotConfig
     private readonly IConfigurationRoot _config = new ConfigurationBuilder()
         // Forgive me father for I have sinned.
         .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName)
-        .AddJsonFile("settings.json")
+        .AddJsonFile("secrets.json")
         .Build();
     
     public BotConfig()
@@ -24,7 +24,6 @@ public class BotConfig
         Database = _config["dbName"];
         Username = _config["dbUsername"];
         Password = _config["dbPassword"];
-        
         
         #if DEBUG
             string? testGuildId = _config["testGuildId"];
