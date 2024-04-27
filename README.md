@@ -8,6 +8,6 @@ Before contributing, please read carefully through our [Contributing Guidelines]
 Ensure first that you have .NET 8.0 installed.
 
 - Clone the repository, and CD into `/Boolean`
-- Run the `dotnet user-secrets init` command to initialise a separate file for the bot details
-- Run `dotnet user-secrets set botToken [token]` to set the bot token
-- Run `dotnet user-secrets set testGuildId [guildId]` so that new commands will quickly be registered for your test server.
+- Copy the `secrets.example.json` and rename it to `secrets.json`
+- Enter the necessary values into the `secrets.json` file
+- Run `dotnet ef database update` (you might need to build the program first)
