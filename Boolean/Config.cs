@@ -18,11 +18,12 @@ public class Config
         public required string Database { get; set; }
         public required string Username { get; set; }
         public required string Password { get; set; }
+        public required string Port { get; set; }
     }
     
     public string GetConnectionString()
     {
         return
-            $"Host=localhost:5432;Database={DbCredentials.Database};Username={DbCredentials.Username};Password={DbCredentials.Password}";
+            $"Host=localhost:{DbCredentials.Port};Database={DbCredentials.Database};Username={DbCredentials.Username};Password={DbCredentials.Password}";
     }
 }
