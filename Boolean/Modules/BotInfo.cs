@@ -4,7 +4,7 @@ using Discord.WebSocket;
 
 namespace Boolean;
 
-public class BotInfo(DiscordSocketClient client, Config config, DataContext dataContext) : InteractionModuleBase<SocketInteractionContext>
+public class BotInfo(DiscordSocketClient client, Config config) : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("guilds", "Gets the number of servers the bot is in.")]
     public async Task Guilds()
