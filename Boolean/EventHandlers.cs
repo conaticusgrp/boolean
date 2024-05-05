@@ -5,7 +5,7 @@ using Discord.WebSocket;
 
 namespace Boolean;
 
-public class EventHandlers(IServiceProvider serviceProvider, BotConfig config, DiscordSocketClient client, InteractionService interactionService)
+public class EventHandlers(IServiceProvider serviceProvider, Config config, DiscordSocketClient client, InteractionService interactionService)
 {
     public Task LogMessage(LogMessage message)
    {

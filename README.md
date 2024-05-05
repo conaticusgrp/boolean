@@ -7,7 +7,9 @@ Before contributing, please read carefully through our [Contributing Guidelines]
 ## Development Setup
 Ensure first that you have .NET 8.0 installed.
 
-- Clone the repository, and CD into `/Boolean`
-- Copy the `secrets.example.json` and rename it to `secrets.json`
-- Enter the necessary values into the `secrets.json` file
+- Clone the repository
+- CD into `/Boolean`
+- Copy the `appsettings.example.json` and rename it to `appsettings.json`
+- Enter the necessary values into the `appsettings.json` file
+    - Note that `TestGuildId` is only required in the debug build
 - Run `dotnet ef database update` (you might need to build the program first)
