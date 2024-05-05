@@ -11,7 +11,6 @@ public class BotInfo(DiscordSocketClient client, Config config, DataContext data
     {
         var embed = new EmbedBuilder
         {
-            Title = "Guilds",
             Description = $"I am currently in **{client.Guilds.Count}** guilds."
         }.WithColor(config.BotTheme);
         
