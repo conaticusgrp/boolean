@@ -1,6 +1,10 @@
 # Boolean
 This is the Boolean Discord bot created by the [conaticus](https://discord.gg/nhdq8Hp33B) community. It works on multiple servers and provides a variety of useful features.
 
+## Tech Stack
+- [Discord.Net](https://docs.discordnet.dev/) wrapper for Discord API
+- [Entity Framework](https://learn.microsoft.com/en-us/ef/) with Postgres for database
+
 ## Contributing
 Before contributing, please read carefully through our [Contributing Guidelines](https://github.com/conaticusgrp/boolean-revamp/blob/develop/CONTRIBUTING.md) so that your pull requests are more likely to be accepted into the codebase.
 
