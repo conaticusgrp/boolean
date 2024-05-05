@@ -482,4 +482,4 @@ $RECYCLE.BIN/
 *.swp
 
 # Secrets.json
-Boolean/secrets.json
+Boolean/appsettings.json
