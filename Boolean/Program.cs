@@ -2,54 +2,45 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Boolean;
 
 class Program
 {
-    private static DbContext _dbContext;
-    
-    private static IServiceProvider _serviceProvider;
+    private static ServiceProvider _serviceProvider;
     private static DiscordSocketClient _client;
-    private static BotConfig _config;
-    private static InteractionService _interactionService;
-
-    static IServiceProvider CreateServices()
-    {
-        _client = new DiscordSocketClient();
-        _interactionService = new InteractionService(_client.Rest);
-
-        var collection = new ServiceCollection()
-            .AddSingleton(_interactionService)
-            .AddSingleton(_client)
-            .AddSingleton(_config)
-            .AddSingleton(_dbContext)
-            .AddSingleton<DiscordSocketConfig>()
-            .AddSingleton<EventHandlers>();
-        
-        return collection.BuildServiceProvider();
-    }
     
     public static async Task Main()
     {
-        // Load config
-        _config = new BotConfig();
+        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
+        Config config = builder.Configuration.Get<Config>()
+                         ?? throw new Exception("Failed to load valid config from appsettings.json, please refer to the README.md for instructions.");
         
-        // Set up Postgres
-        _dbContext = new DbContext(_config);
-        await _dbContext.Database.EnsureCreatedAsync();
+        _client = new DiscordSocketClient();
         
-        // Set up Discord.net
-        _serviceProvider = CreateServices();
-        
-        AttachEventHandlers();
-        await _interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
-
-        await _client.LoginAsync(TokenType.Bot, _config.Token);
+        await _client.LoginAsync(TokenType.Bot, config.DiscordToken);
         await _client.StartAsync();
-
-        await Task.Delay(Timeout.Infinite);
+        
+        var interactionService = new InteractionService(_client.Rest);
+        
+        _serviceProvider = builder.Services
+            .AddSingleton(interactionService)
+            .AddSingleton(_client)
+            .AddSingleton(config)
+            .AddSingleton<DiscordSocketConfig>()
+            .AddSingleton<EventHandlers>()
+            .AddDbContext<DataContext>(options => options.UseNpgsql(config.GetConnectionString()))
+            .BuildServiceProvider();
+        
+        await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
+        AttachEventHandlers();
+        
+        IHost app = builder.Build();
+        await app.RunAsync();
     }
     
     private static void AttachEventHandlers()

@@ -4,14 +4,13 @@ using Discord.WebSocket;
 
 namespace Boolean;
 
-public class BotInfo(DiscordSocketClient client, BotConfig config) : InteractionModuleBase<SocketInteractionContext>
+public class BotInfo(DiscordSocketClient client, Config config) : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("guilds", "Gets the number of servers the bot is in.")]
     public async Task Guilds()
     {
         var embed = new EmbedBuilder
         {
-            Title = "Guilds",
             Description = $"I am currently in **{client.Guilds.Count}** guilds."
         }.WithColor(config.BotTheme);
         
@@ -23,7 +22,6 @@ public class BotInfo(DiscordSocketClient client, BotConfig config) : Interaction
     {
         var embed = new EmbedBuilder
         {
-            Title = "Ping",
             Description = $"Pong. Took **{client.Latency}ms** to respond."
         }.WithColor(config.BotTheme);
         
