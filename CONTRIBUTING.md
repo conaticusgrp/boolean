@@ -76,6 +76,7 @@ return collection.BuildServiceProvider();
   - Avoiding for loops where they are not needed
   - Using Hashmaps and Hashsets instead of arrays when finding elements
   - Fetching data from the Discord.NET cache instead of the API
+- Prefer using discord embeds instead of standard text replies
 - Prefer using `ephemeral` interaction responses where appropriate (sends hidden replies instead of messages in Discord channel)
 - Place all new commands inside the `/Modules` folder
 - Avoid writing long functions, and instead split functionality up into multiple functions
