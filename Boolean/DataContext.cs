@@ -17,8 +17,13 @@ public class Server
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
-    [Column("id")] public UInt64 Id { get; set; }
+    [Column("id")] public UInt64 Id { get; set; } // not sure why this is here?
     [Column("snowflake")] public UInt64 Snowflake { get; set; }
+    [Column("logchannel")] public UInt64? LogChannel { get; set; }
+    [Column("starboard")] public UInt64? Starboard { get; set; }
+    [Column("welcome")] public UInt64? Welcome { get; set; }
+
+    
 }
 
 [Table("members")]
