@@ -59,11 +59,11 @@ public class ServerConfig
                 db.Servers.Add(server);
             }
 
-            string updatedChan = UpdateChannel(type, server, channel.Id, db);
+            UpdateChannel(type, server, channel.Id, db);
             
             await db.SaveChangesAsync();
             // might wanna make this sound less "robotic"
-            embed.Description = $"{updatedChan} channel has been set to <#{channel.Id}>.";
+            embed.Description = $"{type.AsString()} channel has been set to <#{channel.Id}>.";
             await RespondAsync(embed: embed.Build(), ephemeral: true);
         }
     }
@@ -112,10 +112,10 @@ public class ServerConfig
                 return;
             }
             
-            string updatedChan = UpdateChannel(type, server, null, db);
+            UpdateChannel(type, server, null, db);
             
             await db.SaveChangesAsync();
-            embed.Description = $"{updatedChan} channel has been unset.";
+            embed.Description = $"{type.AsString()} channel has been unset.";
             await RespondAsync(embed: embed.Build(), ephemeral: true);
         }
     }
