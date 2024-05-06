@@ -10,20 +10,21 @@ public class DataContext : DbContext
     
     public DbSet<Server> Servers { get; set; }
     public DbSet<Member> Members { get; set; }
-    public DbSet<Channel> Channels { get; set; }
+    public DbSet<SpecialChannel> SpecialChannels { get; set; }
 }
 
 [Table("servers")]
 public class Server
 {
     [Key]
-    [Column("id")] public UInt64 Id { get; set; }
+    [Column("id")] public UInt64 Snowflake { get; set; }
 }
-// Channels configuration
-[Table("channels")]
-public class Channel
+
+// For server channels configuration
+[Table("special_channels")]
+public class SpecialChannel
 {
-    [Column("id"), DatabaseGenerated(DatabaseGeneratedOption.Identity)] public long Id { get; set; } // must be long for bigint type, UInt64 does not support Identity generation
+    [Column("id"), DatabaseGenerated(DatabaseGeneratedOption.Identity)] public long Id { get; set; }
     [Column("server")] public Server Server { get; set; }
     [Column("snowflake")] public UInt64 Snowflake { get; set; }
 

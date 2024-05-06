@@ -11,8 +11,9 @@ public class BotInfo(DiscordSocketClient client, Config config) : InteractionMod
     {
         var embed = new EmbedBuilder
         {
+            Color = config.ColorTheme,
             Description = $"I am currently in **{client.Guilds.Count}** guilds."
-        }.WithColor(config.BotTheme);
+        };
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
@@ -22,8 +23,9 @@ public class BotInfo(DiscordSocketClient client, Config config) : InteractionMod
     {
         var embed = new EmbedBuilder
         {
+            Color = config.ColorTheme,
             Description = $"Pong. Took **{client.Latency}ms** to respond."
-        }.WithColor(config.BotTheme);
+        };
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
