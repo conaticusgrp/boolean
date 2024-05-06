@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Boolean.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240505152042_Initial")]
+    [Migration("20240506204811_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -35,7 +35,7 @@ namespace Boolean.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("administrator");
 
-                    b.Property<decimal>("ServerId")
+                    b.Property<decimal>("ServerSnowflake")
                         .HasColumnType("numeric(20,0)");
 
                     b.Property<decimal>("Snowflake")
@@ -44,32 +44,66 @@ namespace Boolean.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServerId");
+                    b.HasIndex("ServerSnowflake");
 
                     b.ToTable("members");
                 });
 
             modelBuilder.Entity("Boolean.Server", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<decimal>("Snowflake")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("numeric(20,0)")
                         .HasColumnName("id");
+
+                    b.HasKey("Snowflake");
+
+                    b.ToTable("servers");
+                });
+
+            modelBuilder.Entity("Boolean.SpecialChannel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<decimal>("ServerSnowflake")
+                        .HasColumnType("numeric(20,0)");
 
                     b.Property<decimal>("Snowflake")
                         .HasColumnType("numeric(20,0)")
                         .HasColumnName("snowflake");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("purpose");
+
                     b.HasKey("Id");
 
-                    b.ToTable("servers");
+                    b.HasIndex("ServerSnowflake");
+
+                    b.ToTable("special_channels");
                 });
 
             modelBuilder.Entity("Boolean.Member", b =>
                 {
                     b.HasOne("Boolean.Server", "Server")
                         .WithMany()
-                        .HasForeignKey("ServerId")
+                        .HasForeignKey("ServerSnowflake")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Server");
+                });
+
+            modelBuilder.Entity("Boolean.SpecialChannel", b =>
+                {
+                    b.HasOne("Boolean.Server", "Server")
+                        .WithMany()
+                        .HasForeignKey("ServerSnowflake")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -6,7 +6,6 @@ namespace Boolean;
 
 public class UserInfo(DiscordSocketClient client, Config config) : InteractionModuleBase<SocketInteractionContext>
 {
-
     [DefaultMemberPermissions(GuildPermission.ModerateMembers | GuildPermission.Administrator)]
     [SlashCommand("whois", "Get moderator information about a user.")]
     public async Task Whois(IGuildUser user)
@@ -14,6 +13,7 @@ public class UserInfo(DiscordSocketClient client, Config config) : InteractionMo
         var embed = new EmbedBuilder
         {
             Title = user.Username,
+            Color = config.ColorTheme,
             ThumbnailUrl = user.GetAvatarUrl(),
             Fields =
             [
@@ -44,9 +44,8 @@ public class UserInfo(DiscordSocketClient client, Config config) : InteractionMo
                     Value = user.JoinedAt?.ToString("dd/MM/yyyy") ?? "Could not find join date",
                     IsInline = true
                 }
-                
             ]
-        }.WithColor(config.BotTheme);
+        };
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
