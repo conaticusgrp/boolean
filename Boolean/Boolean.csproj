@@ -5,27 +5,33 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-      <UserSecretsId>cedd1d83-75dd-4cc7-984f-0a0101f38512</UserSecretsId>
-  </PropertyGroup>
+        <UserSecretsId>cedd1d83-75dd-4cc7-984f-0a0101f38512</UserSecretsId>
+    </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Discord.Net" Version="3.14.1" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-preview.3.24172.4" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0-preview.3.24172.4">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0-preview.3.24172.4">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0-preview.3.24172.9" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.3.24172.9" />
-      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0-preview.3" />
+        <PackageReference Include="Discord.Net" Version="3.14.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0-preview.3.24172.4"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0-preview.3.24172.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.0-preview.3.24172.4">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.0-preview.3.24172.9"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0-preview.3.24172.9"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0-preview.3"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations\" />
+        <Folder Include="Migrations\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="secrets.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

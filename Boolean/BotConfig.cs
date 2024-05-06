@@ -5,18 +5,17 @@ namespace Boolean;
 
 public class BotConfig
 {
-    public readonly string? Token, Database, Username, Password;
-    public readonly Color BotTheme = Color.Gold;
-    
-    #if DEBUG
-        public readonly ulong TestGuildId;
-    #endif
-    
     private readonly IConfigurationRoot _config = new ConfigurationBuilder()
-        // Forgive me father for I have sinned.
-        .SetBasePath(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName)
+        .SetBasePath(Environment.CurrentDirectory)
         .AddJsonFile("secrets.json")
         .Build();
+    
+    public readonly Color BotTheme = Color.Gold;
+    
+#if DEBUG
+    public readonly ulong TestGuildId;
+#endif
+    public readonly string? Token, Database, Username, Password;
     
     public BotConfig()
     {
@@ -25,14 +24,14 @@ public class BotConfig
         Username = _config["dbUsername"];
         Password = _config["dbPassword"];
         
-        #if DEBUG
-            string? testGuildId = _config["testGuildId"];
+#if DEBUG
+        var testGuildId = _config["testGuildId"];
         
-            if (testGuildId == null) {
-                throw new Exception("'testGuildId' not found in user secrets. Please add a user secret for the test server.");
-            }
-            
-            TestGuildId = ulong.Parse(testGuildId);
-        #endif
+        if (testGuildId == null)
+            throw new Exception(
+                "'testGuildId' not found in user secrets. Please add a user secret for the test server.");
+        
+        TestGuildId = ulong.Parse(testGuildId);
+#endif
     }
 }
