@@ -20,7 +20,10 @@ class Program
         Config config = builder.Configuration.Get<Config>()
                          ?? throw new Exception("Failed to load valid config from appsettings.json, please refer to the README.md for instructions.");
         
-        _client = new DiscordSocketClient();
+        _client = new DiscordSocketClient(new DiscordSocketConfig()
+        {
+            UseInteractionSnowflakeDate = false // Prevents a funny from happening when your OS clock is out of sync
+        });
         
         await _client.LoginAsync(TokenType.Bot, config.DiscordToken);
         await _client.StartAsync();
@@ -31,7 +34,6 @@ class Program
             .AddSingleton(interactionService)
             .AddSingleton(_client)
             .AddSingleton(config)
-            .AddSingleton<DiscordSocketConfig>()
             .AddSingleton<EventHandlers>()
             .AddDbContext<DataContext>(options => options.UseNpgsql(config.GetConnectionString()))
             .BuildServiceProvider();
