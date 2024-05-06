@@ -20,6 +20,13 @@ public class Server
     [Column("id")] public UInt64 Snowflake { get; set; }
 }
 
+public enum SpecialChannelType
+{
+    Logs,
+    Starboard,
+    Welcome
+}
+
 // For server channels configuration
 [Table("special_channels")]
 public class SpecialChannel
@@ -28,7 +35,7 @@ public class SpecialChannel
     [Column("server")] public Server Server { get; set; }
     [Column("snowflake")] public UInt64 Snowflake { get; set; }
 
-    [Column("purpose")] public string Purpose { get; set; } // "welcome", "starboard", etc 
+    [Column("purpose")] public SpecialChannelType Type { get; set; } // "welcome", "starboard", etc 
 }
 
 [Table("members")]

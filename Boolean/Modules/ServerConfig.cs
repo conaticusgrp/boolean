@@ -4,19 +4,12 @@ using Discord.WebSocket;
 
 namespace Boolean;
 
-public enum SpecialChannelType
-{
-    Logs,
-    Starboard,
-    Welcome
-}
-
 public static class ServerConfig
 {
     public static SpecialChannel? GetSpecialChannel(DataContext db, ulong serverId, SpecialChannelType specialChannelType)
     {
         return db.SpecialChannels.FirstOrDefault(sc =>
-             sc.Server.Snowflake == serverId && sc.Purpose == specialChannelType.ToString());
+             sc.Server.Snowflake == serverId && sc.Type == specialChannelType);
     }
 }
 
@@ -55,10 +48,11 @@ public class ServerSet(DataContext db, Config config)
             {
                 Server = server,
                 Snowflake = channelTarget.Id,
-                Purpose = specialChannelType.ToString()
+                Type = specialChannelType
             });
         
         await db.SaveChangesAsync();
+        // Use of ToString() is fine for now, we will want to implement a parser later when we add special channels with multiple words (for upper & lower case)
         embed.Description = $"{specialChannelType.ToString()} channel has been set to <#{channelTarget.Id}>.";
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
