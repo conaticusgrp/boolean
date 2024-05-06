@@ -51,10 +51,9 @@ public class ServerConfig
                 return;
             }
 
-            ulong guildId = channel.Guild.Id;            
-            Server? server = db.Servers.Find(guildId);
+            Server? server = db.Servers.Find(channel.Guild.Id);
             if (server == null) {
-                server = new Server { Id = guildId };
+                server = new Server { Id = channel.Guild.Id };
                 db.Servers.Add(server);
             }
 
