@@ -119,7 +119,7 @@ public class ServerConfig
             await RespondAsync(embed: embed.Build(), ephemeral: true);
         }
     }
-    public static string UpdateChannel(ChannelTypes type, Server server, ulong? value, DataContext db)
+    public static void UpdateChannel(ChannelTypes type, Server server, ulong? value, DataContext db)
     {
         Channel? channel = db.Channels.FirstOrDefault(e => e.Server.Id == server.Id && e.Purpose == type.AsString());
         if (value == null) {
@@ -127,7 +127,8 @@ public class ServerConfig
             if (channel != null) {
                 db.Channels.Remove(channel);
             }
-            return type.AsString();
+
+            return;
         }
         // create or edit it
         if (channel != null) 
@@ -136,6 +137,5 @@ public class ServerConfig
             channel = new Channel { Server = server, Snowflake = value.Value, Purpose = type.AsString() };
             db.Channels.Add(channel);
         }
-        return type.AsString();
     }
 }
