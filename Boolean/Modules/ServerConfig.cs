@@ -12,6 +12,23 @@ public enum ChannelTypes
     Starboard,
     Welcome
 }
+public static class ChannelTypesString
+{
+    public static string AsString(this ChannelTypes enumValue)
+    {
+        switch (enumValue)
+        {
+            case ChannelTypes.Logs:
+                return "logs";
+            case ChannelTypes.Starboard:
+                return "starboard";
+            case ChannelTypes.Welcome:
+                return "welcome";
+        }
+
+        return "";
+    }
+}
 
 public class ServerConfig
 {
@@ -42,7 +59,7 @@ public class ServerConfig
                 db.Servers.Add(server);
             }
 
-            string updatedChan = UpdateChannel(type, server, channel.Id);
+            string updatedChan = UpdateChannel(type, server, channel.Id, db);
             
             await db.SaveChangesAsync();
             // might wanna make this sound less "robotic"
@@ -62,31 +79,17 @@ public class ServerConfig
         {
             var embed = new EmbedBuilder().WithColor(config.BotTheme);
 
-            Server? server = db.Servers.Find(Context.Guild.Id);
-            if (server == null) {
+            Channel? channel = db.Channels.FirstOrDefault(e => e.Server.Id == Context.Guild.Id);
+            if (channel == null) {
                 embed.Description = "This server does not have any configurations yet";
                 await RespondAsync(embed: embed.Build(), ephemeral: true);
                 return;
             }
-
-            string chan = "";
-            ulong? chanid = 0;
-            switch (type) {
-                case ChannelTypes.Logs:
-                    chan = "log";
-                    chanid = server.LogChannel;
-                    break;
-                case ChannelTypes.Starboard:
-                    chan = "starboard";
-                    chanid = server.Starboard;
-                    break;
-                case ChannelTypes.Welcome:
-                    chan = "welcome";
-                    chanid = server.Welcome;
-                    break;
-            }
-            embed.Description = chanid == null ? $"There currently isn't a {chan} channel setup"
-                    : $"The current {chan} channel is set to <#{chanid}>";
+            
+            channel = db.Channels.FirstOrDefault(e => e.Server.Id == Context.Guild.Id && e.Purpose == type.AsString());
+            
+            embed.Description = channel == null ? $"There currently isn't a {type.AsString()} channel setup"
+                    : $"The current {type.AsString()} channel is set to <#{channel.Snowflake}>";
             await RespondAsync(embed: embed.Build(), ephemeral: true);
         }
     }
@@ -109,27 +112,30 @@ public class ServerConfig
                 return;
             }
             
-            string updatedChan = UpdateChannel(type, server, null);
+            string updatedChan = UpdateChannel(type, server, null, db);
             
             await db.SaveChangesAsync();
             embed.Description = $"{updatedChan} channel has been unset.";
             await RespondAsync(embed: embed.Build(), ephemeral: true);
         }
     }
-    public static string UpdateChannel(ChannelTypes type, Server server, ulong? value)
+    public static string UpdateChannel(ChannelTypes type, Server server, ulong? value, DataContext db)
     {
-        switch (type) {
-            case ChannelTypes.Logs:
-                server.LogChannel = value;
-                return "log";
-            case ChannelTypes.Starboard:
-                server.Starboard = value;
-                return "starboard";
-            case ChannelTypes.Welcome:
-                server.Welcome = value;
-                return "welcome";
+        Channel? channel = db.Channels.FirstOrDefault(e => e.Server.Id == server.Id && e.Purpose == type.AsString());
+        if (value == null) {
+            // delete it from the table
+            if (channel != null) {
+                db.Channels.Remove(channel);
+            }
+            return type.AsString();
         }
-
-        return "";
+        // create or edit it
+        if (channel != null) 
+            channel.Snowflake = value.Value;
+        else {
+            channel = new Channel { Server = server, Snowflake = value.Value, Purpose = type.AsString() };
+            db.Channels.Add(channel);
+        }
+        return type.AsString();
     }
 }
