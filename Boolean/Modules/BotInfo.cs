@@ -12,8 +12,9 @@ public class BotInfo(DiscordSocketClient client, BotConfig config) : Interaction
         var embed = new EmbedBuilder
         {
             Title = "Guilds",
-            Description = $"I am currently in **{client.Guilds.Count}** guilds."
-        }.WithColor(config.BotTheme);
+            Description = $"I am currently in **{client.Guilds.Count}** guilds.",
+            Color = config.BotTheme
+        };
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
@@ -24,8 +25,9 @@ public class BotInfo(DiscordSocketClient client, BotConfig config) : Interaction
         var embed = new EmbedBuilder
         {
             Title = "Ping",
-            Description = $"Pong. Took **{client.Latency}ms** to respond."
-        }.WithColor(config.BotTheme);
+            Description = $"Pong. Took **{client.Latency}ms** to respond.",
+            Color = config.BotTheme
+        };
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
