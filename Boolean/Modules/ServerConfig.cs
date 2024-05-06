@@ -30,12 +30,12 @@ public class ServerSet(DataContext db, Config config)
     [SlashCommand("channel", "Marks a channel for a certain purpose")]
     public async Task ChannelSet(SpecialChannelType specialChannelType, SocketTextChannel channelTarget)
     {
-        var embed = new EmbedBuilder().WithColor(config.ColorTheme);
+        var embed = new EmbedBuilder().WithColor(Color.Green);
         
         // Ensure bot has permission to talk in the specified channel
         var permissions = channelTarget.GetPermissionOverwrite(channelTarget.Guild.CurrentUser);
-        if (permissions is { SendMessages: PermValue.Deny }) {
-            embed.Description = $"I am unable to send messages in <#{channelTarget.Id}>.";
+        if (permissions is { ViewChannel: PermValue.Deny }) {
+            embed.Description = $"I am unable to view <#{channelTarget.Id}>.";
             embed.Color = Color.Red;
             await RespondAsync(embed: embed.Build(), ephemeral: true);
             return;
@@ -59,7 +59,7 @@ public class ServerSet(DataContext db, Config config)
             });
         
         await db.SaveChangesAsync();
-        embed.Description = $"{specialChannelType.ToString().ToLower()} channel has been set to <#{channelTarget.Id}>.";
+        embed.Description = $"{specialChannelType.ToString()} channel has been set to <#{channelTarget.Id}>.";
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
 }
@@ -80,7 +80,7 @@ public class ServerGet(DataContext db, Config config)
         if (channel != null)
             embed.Description = $"The current {specialChannelName} channel is set to <#{channel.Snowflake}>.";
         else {
-            embed.Description = $"There currently isn't a {specialChannelName} channel setup.";
+            embed.Description = $"There currently isn't a {specialChannelName} channel setup. To set it up use the `/set channel` command.";
             embed.Color = Color.Red;
         }
         
@@ -104,7 +104,7 @@ public class ServerUnset(DataContext db, Config config)
         
         var embed = new EmbedBuilder
         {
-            Description = $"{specialChannelType.ToString().ToLower()} channel has been unset.",
+            Description = $"{specialChannelType.ToString()} channel has been unset.",
             Color = Color.Green,
         };
         
