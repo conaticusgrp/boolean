@@ -10,7 +10,6 @@ Before contributing, please read carefully through our [Contributing Guidelines]
 
 ## Development Setup
 Ensure first that you have .NET 8.0 installed.
-Ensure that you have ef-cli installed using `dotnet tool install --global dotnet-ef`
 
 - Clone the repository
 - CD into `/Boolean`
