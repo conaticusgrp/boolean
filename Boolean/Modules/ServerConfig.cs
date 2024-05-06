@@ -54,8 +54,7 @@ public class ServerConfig
             ulong guildId = channel.Guild.Id;            
             Server? server = db.Servers.Find(guildId);
             if (server == null) {
-                // Unsure why ID is here, for now snowflake and ID are the same 
-                server = new Server { Id = guildId, Snowflake = guildId};
+                server = new Server { Id = guildId };
                 db.Servers.Add(server);
             }
 

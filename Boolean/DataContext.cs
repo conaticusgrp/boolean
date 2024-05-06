@@ -17,9 +17,7 @@ public class DataContext : DbContext
 public class Server
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
-    [Column("id")] public UInt64 Id { get; set; } // not sure why this is here?
-    [Column("snowflake")] public UInt64 Snowflake { get; set; }
+    [Column("id")] public UInt64 Id { get; set; }
 }
 // Channels configuration
 [Table("channels")]
