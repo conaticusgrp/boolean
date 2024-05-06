@@ -10,13 +10,13 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
     public Task LogMessage(LogMessage message)
    {
        if (message.Exception is CommandException exception) {
-            Console.WriteLine($"[Command/{message.Severity}] {exception.Command.Aliases.First()} " 
+            Log($"[Command/{message.Severity}] {exception.Command.Aliases.First()} " 
                               + $"failed to execute in {exception.Context.Channel}");
-            Console.WriteLine(exception);
+            Log(exception.Message);
             return Task.CompletedTask;
        } 
         
-       Console.WriteLine($"[General/{message.Severity}] {message}");
+       Log($"[General/{message.Severity}] {message}");
        return Task.CompletedTask;
    }
 
@@ -28,7 +28,23 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
             return interactionService.RegisterCommandsGloballyAsync();
         #endif
    }
-
+    public Task Log(string message)
+    {
+        if(GlobalVars.config.LogMode == "stdout")
+        {
+            Console.WriteLine(message);
+             return Task.CompletedTask;
+        }
+        else
+        {
+            if(File.Exists(GlobalVars.config.LogMode))
+            {
+                File.WriteAllText(GlobalVars.config.LogMode, message + "\n");
+            }
+            File.AppendAllText(GlobalVars.config.LogMode, message + "\n");
+            return Task.CompletedTask; 
+        }
+    }
    public Task InteractionCreated(SocketInteraction interaction)
    {
        var ctx = new SocketInteractionContext(client, interaction);
