@@ -16,27 +16,29 @@ class Program
     
     public static async Task Main()
     {
-        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
-        Config config = builder.Configuration.Get<Config>()
-                         ?? throw new Exception("Failed to load valid config from appsettings.json, please refer to the README.md for instructions.");
-        
+        // Dependency injection & application setup
         _client = new DiscordSocketClient(new DiscordSocketConfig()
         {
             UseInteractionSnowflakeDate = false // Prevents a funny from happening when your OS clock is out of sync
         });
         
-        await _client.LoginAsync(TokenType.Bot, config.DiscordToken);
-        await _client.StartAsync();
-        
         var interactionService = new InteractionService(_client.Rest);
         
+        HostApplicationBuilder builder = Host.CreateApplicationBuilder();
+        Config config = builder.Configuration.Get<Config>()
+                         ?? throw new Exception("Failed to load valid config from appsettings.json, please refer to the README.md for instructions.");
+        
         _serviceProvider = builder.Services
+            .AddDbContext<DataContext>(options => options.UseNpgsql(config.GetConnectionString()))
             .AddSingleton(interactionService)
             .AddSingleton(_client)
             .AddSingleton(config)
             .AddSingleton<EventHandlers>()
-            .AddDbContext<DataContext>(options => options.UseNpgsql(config.GetConnectionString()))
             .BuildServiceProvider();
+        
+        // Start the bot
+        await _client.LoginAsync(TokenType.Bot, config.DiscordToken);
+        await _client.StartAsync();
         
         await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
         AttachEventHandlers();
