@@ -486,3 +486,6 @@ Boolean/appsettings.json
 
 # The compiled code
 out
+
+# Database migrations
+/Migrations

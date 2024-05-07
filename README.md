@@ -17,4 +17,5 @@ Ensure first that you have .NET 8.0 installed.
 - Enter the necessary values into the `appsettings.json` file
     - Note that `TestGuildId` is only required in the debug build
 - Run `dotnet tool install --global dotnet-ef` to install entity framework tool
-- Run `dotnet ef database update` (you might need to build the program first)
+- Run `dotnet ef migrations add Initial` we need you to keep track of your own migrations (you might need to build the program first)
+- Run `dotnet ef database update` 
