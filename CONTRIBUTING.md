@@ -80,9 +80,10 @@ return collection.BuildServiceProvider();
 ## Coding Conventions
 - Write code with re-usability in mind, if something is likely to be re-used, abstract it into its own class(es)
 - Write performant and well-optimised code, some good examples are:
+  - Using async for all database queries
+  - Fetching data from the Discord.NET cache instead of the API
   - Avoiding for loops where they are not needed
   - Using Hashmaps and Hashsets instead of arrays when finding elements
-  - Fetching data from the Discord.NET cache instead of the API
 - Place all new commands inside the `/Modules` folder
 - Avoid writing long functions, and instead split functionality up into multiple functions
 
