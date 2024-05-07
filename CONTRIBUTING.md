@@ -74,7 +74,7 @@ return collection.BuildServiceProvider();
 - Prefer using discord embeds instead of standard text replies
 - Use `EmbedColors` class for coloring embeds
 - Prefer using `ephemeral` interaction responses where appropriate (sends hidden replies instead of messages in Discord channel)
-- Prefer **not** using full stops for single sentences such as command descriptions and responses (purely for consistency)
+- Don't use full stops for single sentences
 
 ## Coding Conventions
 - Write code with re-usability in mind, if something is likely to be re-used, abstract it into its own class(es)
