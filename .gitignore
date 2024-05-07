@@ -486,3 +486,5 @@ Boolean/appsettings.json
 
 # The compiled code
 out
+
+Migrations/
