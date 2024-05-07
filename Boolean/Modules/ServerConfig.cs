@@ -29,7 +29,7 @@ public class ServerSet(DataContext db, Config config)
         // Ensure bot has permission to talk in the specified channel
         var permissions = channelTarget.GetPermissionOverwrite(channelTarget.Guild.CurrentUser);
         if (permissions is { ViewChannel: PermValue.Deny }) {
-            embed.Description = $"I am unable to view <#{channelTarget.Id}>.";
+            embed.Description = $"I am unable to view <#{channelTarget.Id}>";
             embed.Color = Color.Red;
             await RespondAsync(embed: embed.Build(), ephemeral: true);
             return;
@@ -54,7 +54,7 @@ public class ServerSet(DataContext db, Config config)
         
         await db.SaveChangesAsync();
         // Use of ToString() is fine for now, we will want to implement a parser later when we add special channels with multiple words (for upper & lower case)
-        embed.Description = $"{specialChannelType.ToString()} channel has been set to <#{channelTarget.Id}>.";
+        embed.Description = $"{specialChannelType.ToString()} channel has been set to <#{channelTarget.Id}>";
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
 }
@@ -73,9 +73,9 @@ public class ServerGet(DataContext db, Config config)
         string specialChannelName = specialChannelType.ToString().ToLower();
         
         if (channel != null)
-            embed.Description = $"The current {specialChannelName} channel is set to <#{channel.Snowflake}>.";
+            embed.Description = $"The current {specialChannelName} channel is set to <#{channel.Snowflake}>";
         else {
-            embed.Description = $"There currently isn't a {specialChannelName} channel setup. To set it up use the `/set channel` command.";
+            embed.Description = $"There currently isn't a {specialChannelName} channel setup. To set it up use the `/set channel` command";
             embed.Color = Color.Red;
         }
         
@@ -99,7 +99,7 @@ public class ServerUnset(DataContext db, Config config)
         
         var embed = new EmbedBuilder
         {
-            Description = $"{specialChannelType.ToString()} channel has been unset.",
+            Description = $"{specialChannelType.ToString()} channel has been unset",
             Color = Color.Green,
         };
         
