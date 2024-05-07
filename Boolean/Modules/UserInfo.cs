@@ -1,3 +1,4 @@
+using Boolean.Util;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -13,7 +14,7 @@ public class UserInfo(DiscordSocketClient client, Config config) : InteractionMo
         var embed = new EmbedBuilder
         {
             Title = user.Username,
-            Color = config.ColorTheme,
+            Color = EmbedColors.Normal,
             ThumbnailUrl = user.GetAvatarUrl(),
             Fields =
             [
