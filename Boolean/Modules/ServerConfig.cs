@@ -1,3 +1,4 @@
+using Boolean.Util;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -17,19 +18,19 @@ public static class ServerConfig
 // Used to set configuration options
 [DefaultMemberPermissions(GuildPermission.Administrator)]
 [Group("set", "Set configuration options")]
-public class ServerSet(DataContext db, Config config)
+public class ServerSet(DataContext db)
     : InteractionModuleBase<SocketInteractionContext>
 {
     // Channel configuration, welcome messages, starboard, etc
     [SlashCommand("channel", "Marks a channel for a certain purpose")]
     public async Task ChannelSet(SpecialChannelType specialChannelType, SocketTextChannel channelTarget)
     {
-        var embed = new EmbedBuilder().WithColor(Color.Green);
+        var embed = new EmbedBuilder().WithColor(EmbedColors.Success);
         
         // Ensure bot has permission to talk in the specified channel
         if (channelTarget.Guild.CurrentUser.GetPermissions(channelTarget).SendMessages == false) {
             embed.Description = $"I am unable to view <#{channelTarget.Id}>";
-            embed.Color = Color.Red;
+            embed.Color = EmbedColors.Fail;
             await RespondAsync(embed: embed.Build(), ephemeral: true);
             return;
         }
@@ -60,13 +61,13 @@ public class ServerSet(DataContext db, Config config)
 // /get, used to get configuration options
 [DefaultMemberPermissions(GuildPermission.Administrator)]
 [Group("get", "Get configuration options")]
-public class ServerGet(DataContext db, Config config)
+public class ServerGet(DataContext db)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("channel", "Get the current configuration for channels")]
     public async Task ChannelGet(SpecialChannelType specialChannelType)
     {
-        var embed = new EmbedBuilder().WithColor(config.ColorTheme);
+        var embed = new EmbedBuilder().WithColor(EmbedColors.Normal);
         
         SpecialChannel? channel = await ServerConfig.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
         string specialChannelName = specialChannelType.ToString().ToLower();
@@ -75,7 +76,7 @@ public class ServerGet(DataContext db, Config config)
             embed.Description = $"The current {specialChannelName} channel is set to <#{channel.Snowflake}>";
         else {
             embed.Description = $"There currently isn't a {specialChannelName} channel setup. To set it up use the `/set channel` command";
-            embed.Color = Color.Red;
+            embed.Color = EmbedColors.Fail;
         }
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
@@ -83,7 +84,7 @@ public class ServerGet(DataContext db, Config config)
 }
 [DefaultMemberPermissions(GuildPermission.Administrator)]
 [Group("unset", "Unset configuration options")]
-public class ServerUnset(DataContext db, Config config) 
+public class ServerUnset(DataContext db) 
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("channel", "Unmarks a channel for a certain purpose")]
@@ -99,7 +100,7 @@ public class ServerUnset(DataContext db, Config config)
         var embed = new EmbedBuilder
         {
             Description = $"{specialChannelType.ToString()} channel has been unset",
-            Color = Color.Green,
+            Color = EmbedColors.Success,
         };
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);

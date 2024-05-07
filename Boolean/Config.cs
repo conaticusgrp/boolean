@@ -7,8 +7,6 @@ public class Config
     public required string DiscordToken { get; set; }
     public required DatabaseCredentials DbCredentials { get; set; }
     
-    public Color ColorTheme = new(255, 123, 0);
-    
     #if DEBUG
         public required ulong TestGuildId { get; set; }
     #endif

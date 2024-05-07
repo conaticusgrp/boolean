@@ -1,17 +1,18 @@
+using Boolean.Util;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace Boolean;
 
-public class BotInfo(DiscordSocketClient client, Config config) : InteractionModuleBase<SocketInteractionContext>
+public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("guilds", "Gets the number of servers the bot is in")]
     public async Task Guilds()
     {
         var embed = new EmbedBuilder
         {
-            Color = config.ColorTheme,
+            Color = EmbedColors.Normal,
             Description = $"I am currently in **{client.Guilds.Count}** guilds"
         };
         
@@ -23,7 +24,7 @@ public class BotInfo(DiscordSocketClient client, Config config) : InteractionMod
     {
         var embed = new EmbedBuilder
         {
-            Color = config.ColorTheme,
+            Color = EmbedColors.Normal,
             Description = $"Pong. Took **{client.Latency}ms** to respond"
         };
         

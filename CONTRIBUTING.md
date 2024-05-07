@@ -72,16 +72,14 @@ return collection.BuildServiceProvider();
 
 ## Response Conventions
 - Prefer using discord embeds instead of standard text replies
+- Use `EmbedColors` class for coloring embeds
 - Prefer using `ephemeral` interaction responses where appropriate (sends hidden replies instead of messages in Discord channel)
 - Prefer **not** using full stops for single sentences such as command descriptions and responses (purely for consistency)
-- Use `Color.Green` embeds for successful transactions
-- Use `Config.ColorTheme` for neutral transactions
-- Use `Color.Red` embeds for failed transactions
 
 ## Coding Conventions
 - Write code with re-usability in mind, if something is likely to be re-used, abstract it into its own class(es)
 - Write performant and well-optimised code, some good examples are:
-  - Using async for all database queries
+  - Using async for all I/O operations
   - Fetching data from the Discord.NET cache instead of the API
   - Avoiding for loops where they are not needed
   - Using Hashmaps and Hashsets instead of arrays when finding elements
