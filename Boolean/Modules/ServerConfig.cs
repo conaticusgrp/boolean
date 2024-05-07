@@ -27,8 +27,7 @@ public class ServerSet(DataContext db, Config config)
         var embed = new EmbedBuilder().WithColor(Color.Green);
         
         // Ensure bot has permission to talk in the specified channel
-        var permissions = channelTarget.GetPermissionOverwrite(channelTarget.Guild.CurrentUser);
-        if (permissions is { ViewChannel: PermValue.Deny }) {
+        if (channelTarget.Guild.CurrentUser.GetPermissions(channelTarget).SendMessages == false) {
             embed.Description = $"I am unable to view <#{channelTarget.Id}>";
             embed.Color = Color.Red;
             await RespondAsync(embed: embed.Build(), ephemeral: true);
