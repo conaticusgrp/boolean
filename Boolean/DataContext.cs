@@ -13,15 +13,14 @@ public class DataContext : DbContext
     
     public DbSet<Server> Servers { get; set; }
     public DbSet<Member> Members { get; set; }
-    public DbSet<Member> Warnings { get; set; }
+    public DbSet<Warning> Warnings { get; set; }
     public DbSet<SpecialChannel> SpecialChannels { get; set; }
 }
 
-[Table("servers")]
 public class Server
 {
-    [Key]
-    [Column("id")] public UInt64 Snowflake { get; set; }
+    [Key] public ulong Snowflake { get; set; }
+    public ICollection<Member> Members { get; } = new List<Member>();
 }
 
 public enum SpecialChannelType
@@ -32,36 +31,37 @@ public enum SpecialChannelType
 }
 
 // For server channels configuration
-[Table("special_channels")]
 public class SpecialChannel
 {
-    [Column("id"), DatabaseGenerated(DatabaseGeneratedOption.Identity)] public long Id { get; set; }
-    [Column("server")] public Server Server { get; set; }
-    [Column("snowflake")] public UInt64 Snowflake { get; set; }
+    // Id type should always be a different type to Discord.NETs snowflakes (ulong) so that we don't get confused between "Id" and "Snowflake"
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id { get; set; }
     
-    [Column("type")] public SpecialChannelType Type { get; set; } // "welcome", "starboard", etc
+    public Server Server { get; set; }
+    
+    public ulong Snowflake { get; set; }
+    
+    public SpecialChannelType Type { get; set; } // "welcome", "starboard", etc
 }
 
-[Table("members")]
 public class Member
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
-    [Column("id")] public UInt64 Id { get; set; }
+    [Column("id"), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public long Id { get; set; }
     
-    [Column("snowflake")] public UInt64 Snowflake { get; set; }
+    public ulong Snowflake { get; set; }
     
-    [Column("server")] public Server Server { get; set; }
+    public ulong ServerId { get; set; }
+    public Server Server { get; set; } = null!;
 }
 
-[Table("warnings")]
 public class Warning
 {
-    [Column("id"), DatabaseGenerated(DatabaseGeneratedOption.Identity)] public long Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public long Id { get; set; }
     
-    [Column("member")] public Member Offender { get; set; }
+    public Member Offender { get; set; }
     
-    [Column("moderator")] public Member Moderator { get; set; }
+    public Member Moderator { get; set; }
     
-    [Column("reason")] public string Reason { get; set; }
+    public string Reason { get; set; }
 }
