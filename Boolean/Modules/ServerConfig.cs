@@ -35,7 +35,7 @@ public class ServerSet(DataContext db)
             return;
         }
 
-        Server? server = await db.Servers.FindAsync(channelTarget.Guild.Id);
+        var server = await db.Servers.FirstOrDefaultAsync(s => s.Snowflake == channelTarget.Guild.Id);
         if (server == null) {
             server = new Server { Snowflake = channelTarget.Guild.Id };
             await db.Servers.AddAsync(server);
@@ -53,6 +53,7 @@ public class ServerSet(DataContext db)
             });
         
         await db.SaveChangesAsync();
+        
         // Use of ToString() is fine for now, we will want to implement a parser later when we add special channels with multiple words (for upper & lower case)
         embed.Description = $"{specialChannelType.ToString()} channel has been set to {channelTarget.Mention}";
         await RespondAsync(embed: embed.Build(), ephemeral: true);
