@@ -2,7 +2,6 @@ using Boolean.Util;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
 
 namespace Boolean;
 
