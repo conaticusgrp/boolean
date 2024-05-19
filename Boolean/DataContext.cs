@@ -11,13 +11,13 @@ public class DataContext : DbContext
 {
     public DataContext(DbContextOptions options) : base(options) {}
     
-    public DbSet<Server> Servers { get; set; }
+    public DbSet<Guild> Guilds { get; set; }
     public DbSet<Member> Members { get; set; }
     public DbSet<Warning> Warnings { get; set; }
     public DbSet<SpecialChannel> SpecialChannels { get; set; }
 }
 
-public class Server
+public class Guild
 {
     [Key] public ulong Snowflake { get; set; }
     public ICollection<Member> Members { get; } = new List<Member>();
@@ -38,7 +38,7 @@ public class SpecialChannel
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
     
-    public Server Server { get; set; }
+    public Guild Guild { get; set; }
     
     public ulong Snowflake { get; set; }
     
@@ -53,7 +53,7 @@ public class Member
     public ulong Snowflake { get; set; }
     
     public ulong ServerId { get; set; }
-    public Server Server { get; set; } = null!;
+    public Guild Guild { get; set; } = null!;
 }
 
 public class Warning

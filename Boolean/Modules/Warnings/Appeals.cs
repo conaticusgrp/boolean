@@ -30,7 +30,7 @@ public partial class Warnings
     public async Task AppealWarningMessage(long warningId, string offenderName, AppealModal modal)
     {
         var warning = await db.Warnings
-            .Include(w => w.Offender.Server)
+            .Include(w => w.Offender.Guild)
             .Include(w => w.Moderator)
             .FirstAsync(w => w.Id == warningId);
         
@@ -70,7 +70,7 @@ public partial class Warnings
         };
         
         var dbAppealsChannel = await db.SpecialChannels.FirstAsync(s =>
-            s.Server.Snowflake == warning.Offender.Server.Snowflake && s.Type == SpecialChannelType.Appeals);
+            s.Guild.Snowflake == warning.Offender.Guild.Snowflake && s.Type == SpecialChannelType.Appeals);
         
         var appealsChannel = await Context.Client.GetChannelAsync(dbAppealsChannel.Snowflake);
         if (appealsChannel is IMessageChannel msgChannel) {

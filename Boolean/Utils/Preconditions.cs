@@ -19,7 +19,7 @@ public class RequireSpecialChannelAttribute(SpecialChannelType type) : Precondit
             return PreconditionResult.FromSuccess();
         
         var appealsChannel = await db.SpecialChannels.FirstOrDefaultAsync(s =>
-            s.Server.Snowflake == context.Guild.Id && s.Type == type);
+            s.Guild.Snowflake == context.Guild.Id && s.Type == type);
         
         if (appealsChannel != null)
             return PreconditionResult.FromSuccess();

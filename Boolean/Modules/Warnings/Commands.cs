@@ -68,7 +68,7 @@ public partial class Warnings(DataContext db) : InteractionModuleBase<SocketInte
     [SlashCommand("history", "Warning history a server member")]
     public async Task History(IUser user)
     {
-        var userWarnings = db.Warnings.Where(w => w.Offender.Snowflake == user.Id && w.Offender.Server.Snowflake == Context.Guild.Id)
+        var userWarnings = db.Warnings.Where(w => w.Offender.Snowflake == user.Id && w.Offender.Guild.Snowflake == Context.Guild.Id)
             .Include(w => w.Offender)
             .Include(w => w.Moderator);
         

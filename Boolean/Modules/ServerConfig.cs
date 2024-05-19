@@ -8,10 +8,10 @@ namespace Boolean;
 
 public static class ServerConfig
 {
-    public static Task<SpecialChannel?> GetSpecialChannel(DataContext db, ulong serverId, SpecialChannelType specialChannelType)
+    public static Task<SpecialChannel?> GetSpecialChannel(DataContext db, ulong guildId, SpecialChannelType specialChannelType)
     {
         return db.SpecialChannels.FirstOrDefaultAsync(sc =>
-             sc.Server.Snowflake == serverId && sc.Type == specialChannelType);
+             sc.Guild.Snowflake == guildId && sc.Type == specialChannelType);
     }
 }
 
@@ -35,10 +35,10 @@ public class ServerSet(DataContext db)
             return;
         }
 
-        var server = await db.Servers.FirstOrDefaultAsync(s => s.Snowflake == channelTarget.Guild.Id);
-        if (server == null) {
-            server = new Server { Snowflake = channelTarget.Guild.Id };
-            await db.Servers.AddAsync(server);
+        var guild = await db.Guilds.FirstOrDefaultAsync(s => s.Snowflake == channelTarget.Guild.Id);
+        if (guild == null) {
+            guild = new Guild { Snowflake = channelTarget.Guild.Id };
+            await db.Guilds.AddAsync(guild);
         }
 
         SpecialChannel? specialChannel = await ServerConfig.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
@@ -47,7 +47,7 @@ public class ServerSet(DataContext db)
         else
             await db.SpecialChannels.AddAsync(new SpecialChannel
             {
-                Server = server,
+                Guild = guild,
                 Snowflake = channelTarget.Id,
                 Type = specialChannelType
             });
