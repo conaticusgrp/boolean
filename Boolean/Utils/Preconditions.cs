@@ -26,7 +26,7 @@ public class RequireSpecialChannelAttribute(SpecialChannelType type) : Precondit
         
         var embed = new EmbedBuilder
         {
-            Description = "You need to set up the appeals channel with `/set channel` to use the warnings commands.",
+            Description = $"You need to set up the '{type.ToString()}' channel with `/set channel` to use the warnings commands.",
             Color = EmbedColors.Fail,
         };
             
