@@ -54,5 +54,6 @@ class Program
         _client.Log += eventHandlers.LogMessage;
         _client.Ready += eventHandlers.Ready;
         _client.InteractionCreated += eventHandlers.InteractionCreated;
+        _client.JoinedGuild += eventHandlers.GuildCreate;
     }
 }
