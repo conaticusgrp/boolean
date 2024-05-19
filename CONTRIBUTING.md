@@ -5,6 +5,23 @@ Hello and thank you for checking out the contributing guidelines for Boolean! Pl
 ## Issues
 All tasks for the project are listed in the repo's [issues](https://github.com/conaticusgrp/boolean-revamp/issues). Feel free to work on any issue that does not have an assignee. There is no guarantee this issue has not already been worked on - it's good to check the PRs page first.
 
+## Command Conventions
+- Use the `RequireChannel` attribute for commands/command groups that require a special channel to be configured
+- Prefer using discord embeds instead of standard text replies
+- Use `EmbedColors` class for coloring embeds
+- Prefer using `ephemeral` interaction responses where appropriate (sends hidden replies instead of messages in Discord channel)
+- Don't use full stops for single sentences
+
+## Coding Conventions
+- Write code with re-usability in mind, if something is likely to be re-used, abstract it into its own class(es)
+- Write performant and well-optimised code, some good examples are:
+  - Using async for all I/O operations
+  - Fetching data from the Discord.NET cache instead of the API
+  - Avoiding for loops where they are not needed
+  - Using Hashmaps and Hashsets instead of arrays when finding elements
+- Place all new commands inside the `/Modules` folder
+- Avoid writing long functions, and instead split functionality up into multiple functions
+
 ## Code Style
 For this project we will be using common C# coding conventions. Please follow these as much as possible to keep our codebase consistent and readable.
 ### Naming Conventions & Comments
@@ -69,22 +86,6 @@ _interactionService = new InteractionService(_client.Rest);
 var collection = new ServiceCollection().AddSingleton(_interactionService).AddSingleton(_client).AddSingleton(_config).AddSingleton<DiscordSocketConfig>().AddSingleton<EventHandlers>();
 return collection.BuildServiceProvider();
 ```
-
-## Response Conventions
-- Prefer using discord embeds instead of standard text replies
-- Use `EmbedColors` class for coloring embeds
-- Prefer using `ephemeral` interaction responses where appropriate (sends hidden replies instead of messages in Discord channel)
-- Prefer **not** using full stops for single sentences such as command descriptions and responses (purely for consistency)
-
-## Coding Conventions
-- Write code with re-usability in mind, if something is likely to be re-used, abstract it into its own class(es)
-- Write performant and well-optimised code, some good examples are:
-  - Using async for all I/O operations
-  - Fetching data from the Discord.NET cache instead of the API
-  - Avoiding for loops where they are not needed
-  - Using Hashmaps and Hashsets instead of arrays when finding elements
-- Place all new commands inside the `/Modules` folder
-- Avoid writing long functions, and instead split functionality up into multiple functions
 
 ## DOs and DON'Ts
 Please do:

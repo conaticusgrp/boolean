@@ -8,10 +8,10 @@ namespace Boolean;
 
 public static class ServerConfig
 {
-    public static Task<SpecialChannel?> GetSpecialChannel(DataContext db, ulong serverId, SpecialChannelType specialChannelType)
+    public static Task<SpecialChannel?> GetSpecialChannel(DataContext db, ulong guildId, SpecialChannelType specialChannelType)
     {
         return db.SpecialChannels.FirstOrDefaultAsync(sc =>
-             sc.Server.Snowflake == serverId && sc.Type == specialChannelType);
+             sc.Guild.Snowflake == guildId && sc.Type == specialChannelType);
     }
 }
 
@@ -29,16 +29,16 @@ public class ServerSet(DataContext db)
         
         // Ensure bot has permission to talk in the specified channel
         if (channelTarget.Guild.CurrentUser.GetPermissions(channelTarget).SendMessages == false) {
-            embed.Description = $"I am unable to view <#{channelTarget.Id}>";
+            embed.Description = $"I am unable to view {channelTarget.Mention}";
             embed.Color = EmbedColors.Fail;
             await RespondAsync(embed: embed.Build(), ephemeral: true);
             return;
         }
 
-        Server? server = await db.Servers.FindAsync(channelTarget.Guild.Id);
-        if (server == null) {
-            server = new Server { Snowflake = channelTarget.Guild.Id };
-            await db.Servers.AddAsync(server);
+        var guild = await db.Guilds.FirstOrDefaultAsync(s => s.Snowflake == channelTarget.Guild.Id);
+        if (guild == null) {
+            guild = new Guild { Snowflake = channelTarget.Guild.Id };
+            await db.Guilds.AddAsync(guild);
         }
 
         SpecialChannel? specialChannel = await ServerConfig.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
@@ -47,14 +47,15 @@ public class ServerSet(DataContext db)
         else
             await db.SpecialChannels.AddAsync(new SpecialChannel
             {
-                Server = server,
+                Guild = guild,
                 Snowflake = channelTarget.Id,
                 Type = specialChannelType
             });
         
         await db.SaveChangesAsync();
+        
         // Use of ToString() is fine for now, we will want to implement a parser later when we add special channels with multiple words (for upper & lower case)
-        embed.Description = $"{specialChannelType.ToString()} channel has been set to <#{channelTarget.Id}>";
+        embed.Description = $"{specialChannelType.ToString()} channel has been set to {channelTarget.Mention}";
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
 }
@@ -75,7 +76,7 @@ public class ServerGet(DataContext db)
         if (channel != null)
             embed.Description = $"The current {specialChannelName} channel is set to <#{channel.Snowflake}>";
         else {
-            embed.Description = $"There currently isn't a {specialChannelName} channel setup. To set it up use the `/set channel` command";
+            embed.Description = $"There currently isn't a {specialChannelName} channel setup. To set it up use the `/set channel` command.";
             embed.Color = EmbedColors.Fail;
         }
         
@@ -84,7 +85,7 @@ public class ServerGet(DataContext db)
 }
 [DefaultMemberPermissions(GuildPermission.Administrator)]
 [Group("unset", "Unset configuration options")]
-public class ServerUnset(DataContext db) 
+public class ServerUnset(DataContext db)
     : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("channel", "Unmarks a channel for a certain purpose")]

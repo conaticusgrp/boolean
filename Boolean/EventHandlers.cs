@@ -30,10 +30,10 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
         #endif
    }
 
-   public Task InteractionCreated(SocketInteraction interaction)
+   public async Task InteractionCreated(SocketInteraction interaction)
    {
        var ctx = new SocketInteractionContext(client, interaction);
-       return interactionService.ExecuteCommandAsync(ctx, serviceProvider);
+       await interactionService.ExecuteCommandAsync(ctx, serviceProvider);
    }
 
    // Tries to send join message to the default channel, if lacking permissions search all channels until permission found
