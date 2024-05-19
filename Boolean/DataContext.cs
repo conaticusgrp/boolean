@@ -52,7 +52,7 @@ public class Member
     
     public ulong Snowflake { get; set; }
     
-    public ulong ServerId { get; set; }
+    public ulong GuildId { get; set; }
     public Guild Guild { get; set; } = null!;
 }
 

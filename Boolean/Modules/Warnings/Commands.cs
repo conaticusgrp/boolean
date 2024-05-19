@@ -1,5 +1,6 @@
 using Boolean.Util;
 using Boolean.Util.Preconditions;
+using Boolean.Utils;
 using Discord;
 using Discord.Interactions;
 using Microsoft.EntityFrameworkCore;
@@ -70,17 +71,24 @@ public partial class Warnings(DataContext db) : InteractionModuleBase<SocketInte
     {
         var userWarnings = db.Warnings.Where(w => w.Offender.Snowflake == user.Id && w.Offender.Guild.Snowflake == Context.Guild.Id)
             .Include(w => w.Offender)
-            .Include(w => w.Moderator);
+            .Include(w => w.Moderator)
+            .ToList();
         
-        var embed = new EmbedBuilder
-        {
-            Title = "Warnings History",
-            Color = EmbedColors.Normal,
-        };
+        var paginator = new PaginatorBuilder<Warning>()
+            .WithTitle("Warnings History")
+            .WithData(userWarnings)
+            .WithPageChangeHandler((warnings, embed) =>
+            {
+                foreach (var warning in warnings)
+                    embed.AddField(warning.Reason, $"Moderator <@{warning.Moderator.Snowflake}>");
+                
+                return embed;
+            })
+            .WithItemsPerPage(2)
+            .WithClient(Context.Client)
+            .WithInteraction(Context.Interaction)
+            .Build();
         
-        foreach (var warning in userWarnings)
-            embed.AddField(warning.Reason, $"Moderator <@{warning.Moderator.Snowflake}>");
-        
-        await RespondAsync(embed: embed.Build(), ephemeral: true);
+        await paginator.SendAsync();
     }
 }
