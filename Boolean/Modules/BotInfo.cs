@@ -30,4 +30,18 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
+
+    // Later we might want to add extensions for users and admins (e.g /help setup or just /help)
+    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [SlashCommand("help", "Explains what can be configured in Boolean")]
+    public async Task Help()
+    {
+        var embed = new EmbedBuilder
+        {
+            Title = "Configuration Help",
+            Description = Config.Strings.HelpMsg,
+            Color = EmbedColors.Normal,
+        };
+        await RespondAsync(embed: embed.Build(), ephemeral: true);
+    }
 }

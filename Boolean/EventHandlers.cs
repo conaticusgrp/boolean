@@ -1,3 +1,4 @@
+using Boolean.Util;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
@@ -33,5 +34,16 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
    {
        var ctx = new SocketInteractionContext(client, interaction);
        await interactionService.ExecuteCommandAsync(ctx, serviceProvider);
+   }
+
+   // Tries to send join message to the default channel, if lacking permissions search all channels until permission found
+   public async Task GuildCreate(SocketGuild guild)
+   {
+       await guild.DefaultChannel.SendMessageAsync(embed: new EmbedBuilder
+       {
+           Color = EmbedColors.Normal,
+           Title = $"Thanks for adding me to {guild.Name}!",
+           Description = Config.Strings.JoinMsg,
+       }.Build());
    }
 }
