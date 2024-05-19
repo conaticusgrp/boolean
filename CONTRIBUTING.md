@@ -7,7 +7,7 @@ All tasks for the project are listed in the repo's [issues](https://github.com/c
 
 ## Code Style
 For this project we will be using common C# coding conventions. Please follow these as much as possible to keep our codebase consistent and readable.
-### Naming Conventions
+### Naming Conventions & Comments
 - Types identifiers (classes, structs, enums etc) are pascal case
 - Private members are prefixed with an underscore in camel case
 - Public members are pascal case
