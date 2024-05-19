@@ -27,7 +27,8 @@ public enum SpecialChannelType
 {
     Logs,
     Starboard,
-    Welcome
+    Welcome,
+    Appeals,
 }
 
 // For server channels configuration
@@ -64,4 +65,6 @@ public class Warning
     public Member Moderator { get; set; }
     
     public string Reason { get; set; }
+    
+    public bool HasAppealed { get; set; }
 }
