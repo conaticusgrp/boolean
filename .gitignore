@@ -488,4 +488,4 @@ Boolean/appsettings.json
 out
 
 # Database migrations
-/Migrations
+/Boolean/Migrations/

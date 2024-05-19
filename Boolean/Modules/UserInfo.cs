@@ -5,7 +5,7 @@ using Discord.WebSocket;
 
 namespace Boolean;
 
-public class UserInfo(DiscordSocketClient client, Config config) : InteractionModuleBase<SocketInteractionContext>
+public class UserInfo : InteractionModuleBase<SocketInteractionContext>
 {
     [DefaultMemberPermissions(GuildPermission.ModerateMembers | GuildPermission.Administrator)]
     [SlashCommand("whois", "Get moderator information about a user")]
