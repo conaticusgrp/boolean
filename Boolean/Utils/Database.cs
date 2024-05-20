@@ -22,3 +22,12 @@ public static class MemberTools
         return member;
     }
 }
+
+public static class SpecialChannelTools
+{
+    public static Task<SpecialChannel?> GetSpecialChannel(DataContext db, ulong guildId, SpecialChannelType specialChannelType)
+    {
+        return db.SpecialChannels.FirstOrDefaultAsync(sc =>
+             sc.Guild.Snowflake == guildId && sc.Type == specialChannelType);
+    }
+}

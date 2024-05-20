@@ -6,15 +6,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Boolean;
 
-public static class SpecialChannels
-{
-    public static Task<SpecialChannel?> GetSpecialChannel(DataContext db, ulong guildId, SpecialChannelType specialChannelType)
-    {
-        return db.SpecialChannels.FirstOrDefaultAsync(sc =>
-             sc.Guild.Snowflake == guildId && sc.Type == specialChannelType);
-    }
-}
-
 public partial class ServerConfig
 {
     // Channel configuration, welcome messages, starboard, etc
@@ -37,7 +28,7 @@ public partial class ServerConfig
             await db.Guilds.AddAsync(guild);
         }
 
-        SpecialChannel? specialChannel = await SpecialChannels.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
+        var specialChannel = await SpecialChannelTools.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
         if (specialChannel != null)
             specialChannel.Snowflake = channelTarget.Id;
         else
@@ -66,8 +57,8 @@ public class ServerGet(DataContext db)
     {
         var embed = new EmbedBuilder().WithColor(EmbedColors.Normal);
         
-        SpecialChannel? channel = await SpecialChannels.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
-        string specialChannelName = specialChannelType.ToString().ToLower();
+        var channel = await SpecialChannelTools.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
+        var specialChannelName = specialChannelType.ToString().ToLower();
         
         if (channel != null)
             embed.Description = $"The current {specialChannelName} channel is set to <#{channel.Snowflake}>";
@@ -87,7 +78,7 @@ public class ServerUnset(DataContext db)
     [SlashCommand("channel", "Unmarks a channel for a certain purpose")]
     public async Task ChannelUnset(SpecialChannelType specialChannelType)
     {
-        SpecialChannel? specialChannel = await SpecialChannels.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
+        var specialChannel = await SpecialChannelTools.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
         
         if (specialChannel != null) {
             db.SpecialChannels.Remove(specialChannel);
