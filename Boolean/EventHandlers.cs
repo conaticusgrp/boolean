@@ -1,4 +1,5 @@
 using Boolean.Util;
+using Boolean.Utils;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
@@ -45,5 +46,30 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
            Title = $"Thanks for adding me to {guild.Name}!",
            Description = Config.Strings.JoinMsg,
        }.Build());
+   }
+   
+   public async Task ButtonExecuted(SocketMessageComponent component)
+   {
+       var customId = component.Data.CustomId;
+       
+       // Return if not a pagination event - later this will need to handle more button events
+       var isNext = customId.EndsWith(PaginatorComponentIds.NextId);
+       if (!isNext && !customId.EndsWith(PaginatorComponentIds.PrevId))
+           return;
+       
+       var id = component.Data.CustomId.Split('_').First();
+       
+       PaginatorCache.Paginators.TryGetValue(id, out var paginator);
+       if (paginator != null) {
+           await paginator.HandleChange(isNext, component);
+           return;
+       }
+       
+       await component.RespondAsync(embed: new EmbedBuilder
+       {
+           Title = "Paginator Timed Out",
+           Description = "This paginator timed out, please use the command again to create a new one.",
+           Color = EmbedColors.Fail,
+       }.Build(), ephemeral: true);
    }
 }

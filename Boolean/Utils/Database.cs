@@ -14,7 +14,7 @@ public static class MemberTools
         member = new Member
         {
             Snowflake = memberId,
-            ServerId = serverId
+            GuildId = serverId
         };
         
         await db.Members.AddAsync(member);
