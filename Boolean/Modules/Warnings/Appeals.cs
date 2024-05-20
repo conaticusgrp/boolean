@@ -2,6 +2,7 @@ using Boolean.Util;
 using Boolean.Util.Preconditions;
 using Discord;
 using Discord.Interactions;
+using Discord.Rest;
 using Microsoft.EntityFrameworkCore;
 
 namespace Boolean.Warnings;
@@ -130,7 +131,7 @@ public partial class Warnings
         await RespondAsync(embed: new EmbedBuilder
         {
             Title = "Warning Appeal Accepted",
-            Description = modal.AcceptReason,
+            Description = $"By: {Context.Interaction.User.Mention}\nReason: `{modal.AcceptReason}`",
             Color = EmbedColors.Success,
         }.Build());
     }
