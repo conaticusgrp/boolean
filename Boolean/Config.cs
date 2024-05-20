@@ -21,6 +21,9 @@ public class Config
                                                 "Here are some I think you should definitely take a look at:\n\n" +
                                                 "__**/set channel <purpose>**__\n" +
                                                 "\u2800Marks a channel for a specific purpose, such as for welcoming messages, starboard, server logs, etc.\n";
+        
+        public static string WelcomeMsg(string userDisplay, string serverName) =>
+            $"Hello {userDisplay}, thank you for joining the **{serverName}** server!";
     }
     
     #if DEBUG

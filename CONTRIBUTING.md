@@ -6,7 +6,7 @@ Hello and thank you for checking out the contributing guidelines for Boolean! Pl
 All tasks for the project are listed in the repo's [issues](https://github.com/conaticusgrp/boolean-revamp/issues). Feel free to work on any issue that does not have an assignee. There is no guarantee this issue has not already been worked on - it's good to check the PRs page first.
 
 ## Command Conventions
-- Use the `RequireChannel` attribute for commands/command groups that require a special channel to be configured
+- Use the necessary attribute or create one in Precondition.cs for commands/command groups that require an item from the database
 - Prefer using discord embeds instead of standard text replies
 - Use `EmbedColors` class for coloring embeds
 - Prefer using `ephemeral` interaction responses where appropriate (sends hidden replies instead of messages in Discord channel)

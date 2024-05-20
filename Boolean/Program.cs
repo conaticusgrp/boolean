@@ -19,6 +19,7 @@ class Program
         // Dependency injection & application setup
         _client = new DiscordSocketClient(new DiscordSocketConfig()
         {
+            GatewayIntents = GatewayIntents.All,
             UseInteractionSnowflakeDate = false // Prevents a funny from happening when your OS clock is out of sync
         });
         
@@ -56,5 +57,6 @@ class Program
         _client.InteractionCreated += eventHandlers.InteractionCreated;
         _client.JoinedGuild += eventHandlers.GuildCreate;
         _client.ButtonExecuted += eventHandlers.ButtonExecuted;
+        _client.UserJoined += eventHandlers.UserJoined;
     }
 }
