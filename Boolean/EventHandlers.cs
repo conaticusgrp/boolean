@@ -1,4 +1,5 @@
 using Boolean.Util;
+using Boolean.Utils;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
@@ -45,5 +46,19 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
            Title = $"Thanks for adding me to {guild.Name}!",
            Description = Config.Strings.JoinMsg,
        }.Build());
+   }
+   
+   public async Task ButtonExecuted(SocketMessageComponent component)
+   {
+       string customId = component.Data.CustomId;
+       
+       // Return if not a pagination event - later this will need to handle more button events
+       bool isNext = customId.EndsWith(PaginatorComponentIds.NextId);
+       if (!isNext && !customId.EndsWith(PaginatorComponentIds.PrevId))
+           return;
+       
+       var id = component.Data.CustomId.Split('_').First();
+       var paginator = PaginatorsCache.Paginators[id];
+       await paginator.HandleChange(isNext, component);
    }
 }

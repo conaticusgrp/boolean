@@ -4,7 +4,92 @@ using Discord.WebSocket;
 
 namespace Boolean.Utils;
 
+// In future we may wish to store paginators in the db with an expiry - to save memory & allow use after bot restarts
+public static class PaginatorsCache
+{
+    public static Dictionary<string, IPaginator> Paginators = new();
+}
+
+public static class PaginatorComponentIds
+{
+    public const string NextId = "pagination_next_btn";
+    public const string PrevId = "pagination_prev_btn";
+}
+
 public delegate EmbedBuilder PageFunc<T>(List<T> data, EmbedBuilder embed);
+
+public interface IPaginator
+{
+    Task HandleChange(bool isNext, SocketMessageComponent component);
+}
+
+public class Paginator<T>(
+    string title,
+    List<T> data,
+    PageFunc<T> pageChangeFunc,
+    int itemsPerPage,
+    DiscordSocketClient client,
+    SocketInteraction interaction)
+    : IPaginator
+{
+    private int _currentPage = 0;
+    private readonly string _id = Guid.NewGuid().ToString();
+    
+    public async Task SendAsync()
+    {
+        var embed = pageChangeFunc(SlicePage(), CreateDefaultEmbed());
+        await interaction.RespondAsync(embed: embed.Build(), components: CreateButtons(true), ephemeral: true);
+        PaginatorsCache.Paginators.Add(_id, this);
+    }
+    
+    private MessageComponent CreateButtons(bool isPreviousDisabled = false, bool isNextDisabled = false)
+    {
+        return new ComponentBuilder()
+            .WithButton("Previous", $"{_id}_{PaginatorComponentIds.PrevId}", disabled: isPreviousDisabled)
+            .WithButton("Next", $"{_id}_{PaginatorComponentIds.NextId}", disabled: isNextDisabled)
+            .Build();
+    }
+    
+    private EmbedBuilder CreateDefaultEmbed()
+    {
+        return new EmbedBuilder
+        {
+            Title = title,
+            Color = EmbedColors.Normal,
+        };
+    }
+    
+    private List<T> SlicePage()
+    {
+        return data
+            .Skip(_currentPage * itemsPerPage)
+            .Take(itemsPerPage)
+            .ToList();
+    }
+    
+    public async Task HandleChange(bool isNext, SocketMessageComponent component)
+    {
+        if (isNext)
+            _currentPage++;
+        else
+            _currentPage--;
+        
+        var embed = pageChangeFunc(SlicePage(), CreateDefaultEmbed());
+        await interaction.ModifyOriginalResponseAsync(m =>
+        {
+            m.Embed = embed.Build();
+            
+            if (_currentPage + itemsPerPage + 1 > data.Count)
+                m.Components = CreateButtons(false, true);
+            else if (_currentPage == 0)
+                m.Components = CreateButtons(true);
+            else
+                m.Components = CreateButtons();
+        });
+        
+        await component.DeferAsync();
+    }
+}
 
 public class PaginatorBuilder<T>
 {
@@ -54,100 +139,5 @@ public class PaginatorBuilder<T>
     public Paginator<T> Build()
     {
         return new Paginator<T>(_title, _data, _pageChangeFunc, _itemsPerPage, _client, _interaction);
-    }
-}
-
-public class Paginator<T>
-{
-    private int _currentPage = 0;
-    private readonly string _id = Guid.NewGuid().ToString();
-    
-    private readonly string _title;
-    private readonly List<T> _data;
-    private readonly PageFunc<T> _pageChangeFunc;
-    private readonly int _itemsPerPage;
-    private readonly DiscordSocketClient _client;
-    private readonly SocketInteraction _interaction;
-    
-    public Paginator(
-        string title,
-        List<T> data,
-        PageFunc<T> pageChangeFunc,
-        int itemsPerPage,
-        DiscordSocketClient client,
-        SocketInteraction interaction)
-    {
-        (_title, _data, _pageChangeFunc, _itemsPerPage, _client, _interaction) = (title, data, pageChangeFunc, itemsPerPage, client, interaction);
-        
-        // WARNING: This is temporary and should be changed as it will cause signficant performance issues later if we have a lot of users
-        _client.ButtonExecuted += PageButtonClicked;
-    }
-    
-    public async Task SendAsync()
-    {
-        var embed = _pageChangeFunc(SlicePage(), CreateDefaultEmbed());
-        await _interaction.RespondAsync(embed: embed.Build(), components: CreateButtons(true), ephemeral: true);
-    }
-    
-    private MessageComponent CreateButtons(bool isPreviousDisabled = false, bool isNextDisabled = false)
-    {
-        return new ComponentBuilder()
-            .WithButton("Previous", $"prev_btn_{_id}", disabled: isPreviousDisabled)
-            .WithButton("Next", $"next_btn_{_id}", disabled: isNextDisabled)
-            .Build();
-    }
-    
-    private EmbedBuilder CreateDefaultEmbed()
-    {
-        return new EmbedBuilder
-        {
-            Title = _title,
-            Color = EmbedColors.Normal,
-        };
-    }
-    
-    private List<T> SlicePage()
-    {
-        return _data
-            .Skip(_currentPage * _itemsPerPage)
-            .Take(_itemsPerPage)
-            .ToList();
-    }
-    
-    private async Task PageButtonClicked(SocketMessageComponent component)
-    {
-        if (!component.Data.CustomId.EndsWith(_id))
-            return;
-        
-        switch (component.Data.CustomId) {
-            case var id when id.StartsWith("next_btn"):
-                _currentPage++;
-                break;
-            case var id when id.StartsWith("prev_btn"):
-                _currentPage--;
-                break;
-            default:
-                return;
-        }
-        
-        var embed = _pageChangeFunc(SlicePage(), CreateDefaultEmbed());
-        await _interaction.ModifyOriginalResponseAsync(m =>
-        {
-            m.Embed = embed.Build();
-            
-            if (_currentPage + _itemsPerPage + 1 > _data.Count)
-                m.Components = CreateButtons(false, true);
-            else if (_currentPage == 0)
-                m.Components = CreateButtons(true);
-            else
-                m.Components = CreateButtons();
-        });
-        
-        await component.DeferAsync();
-    }
-    
-    ~Paginator()
-    {
-        _client.ButtonExecuted -= PageButtonClicked;
     }
 }

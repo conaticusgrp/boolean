@@ -55,5 +55,6 @@ class Program
         _client.Ready += eventHandlers.Ready;
         _client.InteractionCreated += eventHandlers.InteractionCreated;
         _client.JoinedGuild += eventHandlers.GuildCreate;
+        _client.ButtonExecuted += eventHandlers.ButtonExecuted;
     }
 }
