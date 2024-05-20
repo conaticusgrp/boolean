@@ -20,7 +20,12 @@ public class DataContext : DbContext
 public class Guild
 {
     [Key] public ulong Snowflake { get; set; }
+    
     public ICollection<Member> Members { get; } = new List<Member>();
+    
+    public ICollection<SpecialChannel> SpecialChannels { get; } = new List<SpecialChannel>();
+    
+    public ulong? JoinRoleSnowflake { get; set; }
 }
 
 public enum SpecialChannelType
@@ -38,7 +43,8 @@ public class SpecialChannel
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public long Id { get; set; }
     
-    public Guild Guild { get; set; }
+    public ulong GuildId { get; set; }
+    public Guild Guild { get; set; } = null!;
     
     public ulong Snowflake { get; set; }
     

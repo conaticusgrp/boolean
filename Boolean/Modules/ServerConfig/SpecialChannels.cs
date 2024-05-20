@@ -1,4 +1,5 @@
 using Boolean.Util;
+using Boolean.Util.Preconditions;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
@@ -6,9 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Boolean;
 
-public partial class ServerConfig
+public partial class ServerSet
 {
     // Channel configuration, welcome messages, starboard, etc
+    [RequireGuild]
     [SlashCommand("channel", "Marks a channel for a certain purpose")]
     public async Task ChannelSet(SpecialChannelType specialChannelType, SocketTextChannel channelTarget)
     {
@@ -22,22 +24,20 @@ public partial class ServerConfig
             return;
         }
 
-        var guild = await db.Guilds.FirstOrDefaultAsync(s => s.Snowflake == channelTarget.Guild.Id);
-        if (guild == null) {
-            guild = new Guild { Snowflake = channelTarget.Guild.Id };
-            await db.Guilds.AddAsync(guild);
-        }
-
         var specialChannel = await SpecialChannelTools.GetSpecialChannel(db, Context.Guild.Id, specialChannelType);
+        
         if (specialChannel != null)
             specialChannel.Snowflake = channelTarget.Id;
-        else
+        else {
+            var guild = await db.Guilds.FirstAsync(s => s.Snowflake == channelTarget.Guild.Id);
+            
             await db.SpecialChannels.AddAsync(new SpecialChannel
             {
-                Guild = guild,
+                GuildId = guild.Snowflake,
                 Snowflake = channelTarget.Id,
                 Type = specialChannelType
             });
+        }
         
         await db.SaveChangesAsync();
         
@@ -46,11 +46,7 @@ public partial class ServerConfig
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
 }
-// /get, used to get configuration options
-[DefaultMemberPermissions(GuildPermission.Administrator)]
-[Group("get", "Get configuration options")]
-public class ServerGet(DataContext db)
-    : InteractionModuleBase<SocketInteractionContext>
+public partial class ServerGet
 {
     [SlashCommand("channel", "Get the current configuration for channels")]
     public async Task ChannelGet(SpecialChannelType specialChannelType)
@@ -70,10 +66,8 @@ public class ServerGet(DataContext db)
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
 }
-[DefaultMemberPermissions(GuildPermission.Administrator)]
-[Group("unset", "Unset configuration options")]
-public class ServerUnset(DataContext db)
-    : InteractionModuleBase<SocketInteractionContext>
+
+public partial class ServerUnset
 {
     [SlashCommand("channel", "Unmarks a channel for a certain purpose")]
     public async Task ChannelUnset(SpecialChannelType specialChannelType)

@@ -54,3 +54,25 @@ public class RequireButtonPermission(GuildPermission permission) : PreconditionA
         return PreconditionResult.FromError("User does not have permission to use button.");
     }
 }
+
+public class RequireGuildAttribute : PreconditionAttribute
+{
+    public override async Task<PreconditionResult> CheckRequirementsAsync(
+        IInteractionContext context, ICommandInfo commandInfo, IServiceProvider services)
+    {
+        var db = services.GetRequiredService<DataContext>();
+        
+        if (context.Guild == null)
+            return PreconditionResult.FromSuccess();
+        
+        var guild = await db.Guilds.FirstOrDefaultAsync(g => g.Snowflake == context.Guild.Id);
+        
+        if (guild != null)
+            return PreconditionResult.FromSuccess();
+        
+        await db.Guilds.AddAsync(new Guild { Snowflake = context.Guild.Id });
+        await db.SaveChangesAsync();
+        
+        return PreconditionResult.FromSuccess();
+    }
+}

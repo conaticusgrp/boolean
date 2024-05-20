@@ -4,10 +4,16 @@ using Discord;
 using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
+using Microsoft.EntityFrameworkCore;
 
 namespace Boolean;
 
-public class EventHandlers(IServiceProvider serviceProvider, Config config, DiscordSocketClient client, InteractionService interactionService)
+public class EventHandlers(
+    DataContext db,
+    IServiceProvider serviceProvider,
+    Config config,
+    DiscordSocketClient client,
+    InteractionService interactionService)
 {
     public Task LogMessage(LogMessage message)
    {
@@ -71,5 +77,17 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
            Description = "This paginator timed out, please use the command again to create a new one.",
            Color = EmbedColors.Fail,
        }.Build(), ephemeral: true);
+   }
+   
+   public async Task UserJoined(IGuildUser user)
+   {
+       if (user.IsBot)
+           return;
+       
+       var guild = await db.Guilds.FirstOrDefaultAsync(g => g.Snowflake == user.Guild.Id);
+       if (guild?.JoinRoleSnowflake == null)
+           return;
+       
+       await user.AddRoleAsync(guild.JoinRoleSnowflake ?? 0);
    }
 }
