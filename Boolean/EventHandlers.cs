@@ -50,15 +50,26 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
    
    public async Task ButtonExecuted(SocketMessageComponent component)
    {
-       string customId = component.Data.CustomId;
+       var customId = component.Data.CustomId;
        
        // Return if not a pagination event - later this will need to handle more button events
-       bool isNext = customId.EndsWith(PaginatorComponentIds.NextId);
+       var isNext = customId.EndsWith(PaginatorComponentIds.NextId);
        if (!isNext && !customId.EndsWith(PaginatorComponentIds.PrevId))
            return;
        
        var id = component.Data.CustomId.Split('_').First();
-       var paginator = PaginatorsCache.Paginators[id];
-       await paginator.HandleChange(isNext, component);
+       
+       PaginatorCache.Paginators.TryGetValue(id, out var paginator);
+       if (paginator != null) {
+           await paginator.HandleChange(isNext, component);
+           return;
+       }
+       
+       await component.RespondAsync(embed: new EmbedBuilder
+       {
+           Title = "Paginator Timed Out",
+           Description = "This paginator timed out, please use the command again to create a new one.",
+           Color = EmbedColors.Fail,
+       }.Build(), ephemeral: true);
    }
 }

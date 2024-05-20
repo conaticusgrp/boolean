@@ -4,10 +4,19 @@ using Discord.WebSocket;
 
 namespace Boolean.Utils;
 
-// In future we may wish to store paginators in the db with an expiry - to save memory & allow use after bot restarts
-public static class PaginatorsCache
+// In the future, we may wish to store paginators in the db with an expiry - to save memory & allow use after bot restarts
+public static class PaginatorCache
 {
-    public static Dictionary<string, IPaginator> Paginators = new();
+    public static readonly Dictionary<string, IPaginator> Paginators = new();
+    
+    public static Task Add(string id, IPaginator paginator)
+    {
+        Paginators.Add(id, paginator);
+        
+        // Remove paginator from cache after 2 minutes
+        return Task.Delay(TimeSpan.FromMinutes(2))
+            .ContinueWith(t => Paginators.Remove(id));
+    }
 }
 
 public static class PaginatorComponentIds
@@ -39,7 +48,7 @@ public class Paginator<T>(
     {
         var embed = pageChangeFunc(SlicePage(), CreateDefaultEmbed());
         await interaction.RespondAsync(embed: embed.Build(), components: CreateButtons(true), ephemeral: true);
-        PaginatorsCache.Paginators.Add(_id, this);
+        await PaginatorCache.Add(_id, this);
     }
     
     private MessageComponent CreateButtons(bool isPreviousDisabled = false, bool isNextDisabled = false)
