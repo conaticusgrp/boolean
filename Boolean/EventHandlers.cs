@@ -58,8 +58,8 @@ public class EventHandlers(IServiceProvider serviceProvider, Config config, Disc
            return;
        
        var id = component.Data.CustomId.Split('_').First();
-       
        PaginatorCache.Paginators.TryGetValue(id, out var paginator);
+       
        if (paginator != null) {
            await paginator.HandleChange(isNext, component);
            return;

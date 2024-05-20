@@ -25,12 +25,12 @@ public static class PaginatorComponentIds
     public const string PrevId = "pagination_prev_btn";
 }
 
-public delegate EmbedBuilder PageFunc<T>(List<T> data, EmbedBuilder embed);
-
 public interface IPaginator
 {
     Task HandleChange(bool isNext, SocketMessageComponent component);
 }
+
+public delegate EmbedBuilder PageFunc<T>(List<T> data, EmbedBuilder embed);
 
 public class Paginator<T>(
     string title,
