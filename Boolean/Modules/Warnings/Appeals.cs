@@ -2,7 +2,6 @@ using Boolean.Util;
 using Boolean.Util.Preconditions;
 using Discord;
 using Discord.Interactions;
-using Discord.Rest;
 using Microsoft.EntityFrameworkCore;
 
 namespace Boolean.Warnings;
