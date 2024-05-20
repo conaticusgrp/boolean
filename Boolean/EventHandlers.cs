@@ -85,9 +85,18 @@ public class EventHandlers(
            return;
        
        var guild = await db.Guilds.FirstOrDefaultAsync(g => g.Snowflake == user.Guild.Id);
-       if (guild?.JoinRoleSnowflake == null)
+       if (guild?.JoinRoleSnowflake != null) 
+           await user.AddRoleAsync(guild.JoinRoleSnowflake ?? 0);
+       
+       var dbWelcomeChannel = await SpecialChannelTools.GetSpecialChannel(db, user.Guild.Id, SpecialChannelType.Welcome);
+       if (dbWelcomeChannel == null)
            return;
        
-       await user.AddRoleAsync(guild.JoinRoleSnowflake ?? 0);
+       var welcomeChannel = await user.Guild.GetChannelAsync(dbWelcomeChannel.Snowflake) as IMessageChannel;
+       await welcomeChannel?.SendMessageAsync(text: user.Mention, embed: new EmbedBuilder
+       {
+           Description = Config.Strings.WelcomeMsg(user.DisplayName, user.Guild.Name),
+           Color = EmbedColors.Normal,
+       }.Build())!;
    }
 }

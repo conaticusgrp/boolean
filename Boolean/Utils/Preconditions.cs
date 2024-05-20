@@ -30,7 +30,7 @@ public class RequireSpecialChannelAttribute(SpecialChannelType type) : Precondit
             Color = EmbedColors.Fail,
         };
             
-        await context.Interaction.RespondAsync(embed: embed.Build());
+        await context.Interaction.RespondAsync(embed: embed.Build(), ephemeral: true);
         return PreconditionResult.FromError("No appeals channel provided");
     }
 }

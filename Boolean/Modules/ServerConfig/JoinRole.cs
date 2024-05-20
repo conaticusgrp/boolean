@@ -32,7 +32,7 @@ public partial class ServerSet
             return;
         }
         
-        var guild = await db.Guilds.FirstAsync(s => s.Snowflake == Context.Guild.Id);
+        var guild = await db.Guilds.FirstAsync(g => g.Snowflake == Context.Guild.Id);
         guild.JoinRoleSnowflake = joinRole.Id;
         await db.SaveChangesAsync();
         
@@ -51,6 +51,15 @@ public partial class ServerGet
     public async Task JoinRoleGet()
     {
         var guild = await db.Guilds.FirstAsync(s => s.Snowflake == Context.Guild.Id);
+        if (guild.JoinRoleSnowflake == null) {
+            await RespondAsync(embed: new EmbedBuilder 
+            {
+                Description = $"There is currently no join role set up. You can set one up with the `/set joinrole` command.",
+                Color = EmbedColors.Fail,
+            }.Build(), ephemeral: true);
+            return;
+        }
+        
         await RespondAsync(embed: new EmbedBuilder 
         {
             Description = $"The current join role is set to <@&{guild.JoinRoleSnowflake}>",
