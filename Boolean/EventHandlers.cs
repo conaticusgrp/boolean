@@ -5,11 +5,11 @@ using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Boolean;
 
 public class EventHandlers(
-    DataContext db,
     IServiceProvider serviceProvider,
     Config config,
     DiscordSocketClient client,
@@ -83,6 +83,9 @@ public class EventHandlers(
    {
        if (user.IsBot)
            return;
+       
+       // We can't pass in data context to the class because EventHandlers is a singleton and data context is scoped
+       var db = serviceProvider.GetRequiredService<DataContext>();
        
        var guild = await db.Guilds.FirstOrDefaultAsync(g => g.Snowflake == user.Guild.Id);
        if (guild?.JoinRoleSnowflake != null) 
