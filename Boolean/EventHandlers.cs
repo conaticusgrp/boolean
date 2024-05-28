@@ -159,10 +159,26 @@ public class EventHandlers(
        var starboardChannel = await client.GetChannelAsync(dbStarboardChannel.Snowflake) as ITextChannel;
        var embed = new EmbedBuilder
        {
+           Title = "Message Link",
+           ThumbnailUrl = message.Author.GetAvatarUrl(),
            Color = EmbedColors.Normal,
-           Description = message.Content,
+           Fields = [
+               new EmbedFieldBuilder
+               {
+                   Name = "Author",
+                   Value = message.Author.Username,
+                   IsInline = true,
+               },
+               
+               new EmbedFieldBuilder
+               {
+                   Name = "Message",
+                   Value = message.Content,
+                   IsInline = true,
+               },
+           ],
            Url = message.GetJumpUrl(),
-       }.WithAuthor(message.Author);
+       };
        
        await starboardChannel.SendMessageAsync(embed: embed.Build());
        
