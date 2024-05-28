@@ -67,6 +67,7 @@ class Program
         _client.JoinedGuild += eventHandlers.GuildCreate;
         _client.ButtonExecuted += eventHandlers.ButtonExecuted;
         _client.ReactionAdded += eventHandlers.ReactionAdded;
+        _client.ReactionRemoved += eventHandlers.ReactionRemoved;
         _client.UserJoined += eventHandlers.UserJoined;
     }
 }

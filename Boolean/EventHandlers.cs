@@ -169,4 +169,21 @@ public class EventHandlers(
        starReaction.IsOnStarboard = true;
        await db.SaveChangesAsync();
    }
+   
+   public async Task ReactionRemoved(Cacheable<IUserMessage, ulong> cachedMessage,
+       Cacheable<IMessageChannel, ulong> originChannel, SocketReaction reaction)
+   {
+       if (reaction.Emote.Name != Config.Emojis.Star)
+           return;
+       
+       var db = serviceProvider.GetRequiredService<DataContext>();
+       var starReaction = await db.StarReactions
+           .FirstOrDefaultAsync(sr => sr.MessageSnowflake == cachedMessage.Id);
+       
+       if (starReaction == null || starReaction.IsOnStarboard == true)
+           return;
+       
+       starReaction.ReactionCount--;
+       await db.SaveChangesAsync();
+   }
 }
