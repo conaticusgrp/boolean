@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Boolean;
 
-public partial class ServerSet
+public partial class GuildSet
 {
     // Channel configuration, welcome messages, starboard, etc
     [RequireGuild]
@@ -46,7 +46,7 @@ public partial class ServerSet
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
 }
-public partial class ServerGet
+public partial class GuildGet
 {
     [SlashCommand("channel", "Get the current configuration for channels")]
     public async Task ChannelGet(SpecialChannelType specialChannelType)
@@ -67,7 +67,7 @@ public partial class ServerGet
     }
 }
 
-public partial class ServerUnset
+public partial class GuildUnset
 {
     [SlashCommand("channel", "Unmarks a channel for a certain purpose")]
     public async Task ChannelUnset(SpecialChannelType specialChannelType)

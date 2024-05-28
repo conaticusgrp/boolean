@@ -15,6 +15,8 @@ public class DataContext : DbContext
     public DbSet<Member> Members { get; set; }
     public DbSet<Warning> Warnings { get; set; }
     public DbSet<SpecialChannel> SpecialChannels { get; set; }
+    
+    public DbSet<StarReaction> StarReactions { get; set; }
 }
 
 public class Guild
@@ -24,6 +26,10 @@ public class Guild
     public ICollection<Member> Members { get; } = new List<Member>();
     
     public ICollection<SpecialChannel> SpecialChannels { get; } = new List<SpecialChannel>();
+    
+    public ICollection<StarReaction> StarReactions { get; } = new List<StarReaction>();
+    
+    public uint? StarboardThreshold { get; set; }
     
     public ulong? JoinRoleSnowflake { get; set; }
 }
@@ -73,4 +79,21 @@ public class Warning
     public string Reason { get; set; }
     
     public bool HasAppealed { get; set; }
+}
+
+// In future we should set expiry dates for these to be removed from the database
+public class StarReaction
+{
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public long Id { get; set; }
+    public Guild Guild { get; set; }
+    
+    public ulong GuildId { get; set; }
+    
+    public bool IsOnStarboard { get; set; }
+    
+    public uint ReactionCount { get; set; } = 1;
+    
+    public ulong MessageSnowflake { get; set; }
+    
+    
 }

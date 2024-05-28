@@ -22,7 +22,7 @@ public class EventHandlers(
                               + $"failed to execute in {exception.Context.Channel}");
             Console.WriteLine(exception);
             return Task.CompletedTask;
-       } 
+       }
         
        Console.WriteLine($"[General/{message.Severity}] {message}");
        return Task.CompletedTask;
@@ -101,5 +101,72 @@ public class EventHandlers(
            Description = Config.Strings.WelcomeMsg(user.DisplayName, user.Guild.Name),
            Color = EmbedColors.Normal,
        }.Build())!;
+   }
+   
+   public async Task ReactionAdded(Cacheable<IUserMessage, ulong> cachedMessage,
+       Cacheable<IMessageChannel, ulong> originChannel, SocketReaction reaction)
+   {
+       if (reaction.Emote.Name != Config.Emojis.Star)
+           return;
+       
+       // Message IDs are unique across discord yay
+       var db = serviceProvider.GetRequiredService<DataContext>();
+       var starReaction = await db.StarReactions
+           .Include(sr => sr.Guild.SpecialChannels)
+           .FirstOrDefaultAsync(sr => sr.MessageSnowflake == cachedMessage.Id);
+       
+       if (starReaction != null) {
+           var message = await cachedMessage.GetOrDownloadAsync();
+           await HandleExistingStarReaction(db, message, starReaction);
+           return;
+       }
+       
+       var channel = await originChannel.GetOrDownloadAsync();
+       if (channel is not SocketTextChannel textChannel)
+           return;
+       
+       var guild = await GuildTools.FindOrCreate(db, textChannel.Guild.Id);
+       if (guild.StarboardThreshold == null)
+           return;
+       
+       await db.StarReactions.AddAsync(new StarReaction
+       {
+           GuildId = textChannel.Guild.Id,
+           MessageSnowflake = cachedMessage.Id
+       });
+       
+       await db.SaveChangesAsync();
+   }
+   
+   private async Task HandleExistingStarReaction(DataContext db, IUserMessage message, StarReaction starReaction)
+   {
+       if (starReaction.IsOnStarboard || starReaction.Guild.StarboardThreshold == null)
+           return;
+       
+       var dbStarboardChannel = starReaction.Guild.SpecialChannels
+           .FirstOrDefault(sc => sc.Type == SpecialChannelType.Starboard);
+       
+       if (dbStarboardChannel == null)
+           return;
+       
+       starReaction.ReactionCount++;
+       
+       if (starReaction.ReactionCount != starReaction.Guild.StarboardThreshold) {
+           await db.SaveChangesAsync();
+           return;
+       }
+       
+       var starboardChannel = await client.GetChannelAsync(dbStarboardChannel.Snowflake) as ITextChannel;
+       var embed = new EmbedBuilder
+       {
+           Color = EmbedColors.Normal,
+           Description = message.Content,
+           Url = message.GetJumpUrl(),
+       }.WithAuthor(message.Author);
+       
+       await starboardChannel.SendMessageAsync(embed: embed.Build());
+       
+       starReaction.IsOnStarboard = true;
+       await db.SaveChangesAsync();
    }
 }
