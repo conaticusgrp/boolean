@@ -19,8 +19,8 @@ public partial class Warnings(DataContext db) : InteractionModuleBase<SocketInte
         [Summary(description: "Whether a public chat notification will be sent.")] bool silent = false)
     {
         var moderator = Context.Interaction.User;
-        var dbOffender = await MemberTools.FindOrCreateMember(db, offender.Id, Context.Guild.Id);
-        var dbModerator = await MemberTools.FindOrCreateMember(db, moderator.Id, Context.Guild.Id);
+        var dbOffender = await MemberTools.FindOrCreate(db, offender.Id, Context.Guild.Id);
+        var dbModerator = await MemberTools.FindOrCreate(db, moderator.Id, Context.Guild.Id);
         
         var warning = await db.Warnings.AddAsync(new Warning
         {

@@ -26,6 +26,13 @@ public class Config
             $"Hello {userDisplay}, thank you for joining the **{serverName}** server!";
     }
     
+    // Each represents the unicode for that emoji
+    // This should be compared with IEmote.Name
+    public static class Emojis
+    {
+        public const string Star = "\u2b50";
+    }
+    
     #if DEBUG
         public required ulong TestGuildId { get; set; }
     #endif
