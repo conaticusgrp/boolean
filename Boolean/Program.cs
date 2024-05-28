@@ -32,7 +32,8 @@ class Program
         _client = new DiscordSocketClient(new DiscordSocketConfig
         {
             GatewayIntents = GatewayIntents.All,
-            UseInteractionSnowflakeDate = false // Prevents a funny from happening when your OS clock is out of sync
+            UseInteractionSnowflakeDate = false, // Prevents a funny from happening when your OS clock is out of sync
+            MessageCacheSize = 100,
         });
         
         var interactionService = new InteractionService(_client.Rest);
@@ -65,6 +66,8 @@ class Program
         _client.InteractionCreated += eventHandlers.InteractionCreated;
         _client.JoinedGuild += eventHandlers.GuildCreate;
         _client.ButtonExecuted += eventHandlers.ButtonExecuted;
+        _client.ReactionAdded += eventHandlers.ReactionAdded;
+        _client.ReactionRemoved += eventHandlers.ReactionRemoved;
         _client.UserJoined += eventHandlers.UserJoined;
     }
 }

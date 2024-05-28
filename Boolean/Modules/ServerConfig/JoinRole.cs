@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Boolean;
 
-public partial class ServerSet
+public partial class GuildSet
 {
     [RequireGuild]
     [SlashCommand("joinrole", "Sets role members are assigned when joining the server")]
@@ -44,7 +44,7 @@ public partial class ServerSet
     }
 }
 
-public partial class ServerGet
+public partial class GuildGet
 {
     [RequireGuild]
     [SlashCommand("joinrole", "Gets the role members are assigned when joining the server")]
@@ -68,7 +68,7 @@ public partial class ServerGet
     }
 }
 
-public partial class ServerUnset
+public partial class GuildUnset
 {
     [RequireGuild]
     [SlashCommand("joinrole", "Unsets the role members are assigned when joining the server")]
