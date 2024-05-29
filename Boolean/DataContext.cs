@@ -95,3 +95,4 @@ public class StarReaction
     
     public ulong MessageSnowflake { get; set; }
 }
+
