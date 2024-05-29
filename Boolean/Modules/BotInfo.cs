@@ -59,7 +59,7 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
 
-    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    // We might later want to consider making this maintainers only (as people could use this to exploit the bot)
     [SlashCommand("status", "Shows the bot's compute usage (CPU, RAM, etc)")]
     public async Task Status()
     {
