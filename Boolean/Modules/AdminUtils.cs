@@ -7,7 +7,7 @@ using Discord.WebSocket;
 namespace Boolean;
 
 [DefaultMemberPermissions(GuildPermission.Administrator)]
-public class AdminUtils(DiscordSocketClient client) : InteractionModuleBase<SocketInteractionContext>
+public class AdminUtils : InteractionModuleBase<SocketInteractionContext>
 {
     [SlashCommand("repeat", "Repeats the message you send into the channel")]
     public async Task Repeat(string msg)
