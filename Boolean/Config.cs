@@ -22,6 +22,10 @@ public class Config
                                                 "__**/set channel <purpose>**__\n" +
                                                 "\u2800Marks a channel for a specific purpose, such as for welcoming messages, starboard, server logs, etc.\n";
         
+        public const string ContributeMsg = "Hello and thank you for your interest in contributing to Boolean!\n\n" +
+                                            "To get started, please visit our open source [repository](https://github.com/conaticusgrp/boolean) and check out our [contributing guide](https://github.com/conaticusgrp/boolean/blob/main/CONTRIBUTING.md). " +
+                                            "Once completed, you may review our [issues](https://github.com/conaticusgrp/boolean/issues) and choose whichever task you are interested in.";
+        
         public static string WelcomeMsg(string userDisplay, string serverName) =>
             $"Hello {userDisplay}, thank you for joining the **{serverName}** server!";
     }
