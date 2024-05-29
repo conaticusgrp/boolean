@@ -44,4 +44,17 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
         };
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
+    
+    [SlashCommand("contribute", "Information on how to contribute to the discord bot.")]
+    public async Task Contribute()
+    {
+        var embed = new EmbedBuilder
+        {
+            Title = "Contributing to Boolean",
+            Description = Config.Strings.ContributeMsg,
+            Color = EmbedColors.Normal
+        };
+        
+        await RespondAsync(embed: embed.Build(), ephemeral: true);
+    }
 }

@@ -94,6 +94,4 @@ public class StarReaction
     public uint ReactionCount { get; set; } = 1;
     
     public ulong MessageSnowflake { get; set; }
-    
-    
 }
