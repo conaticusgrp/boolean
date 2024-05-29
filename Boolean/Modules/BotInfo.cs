@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Boolean.Util;
 using Discord;
 using Discord.Interactions;
@@ -54,6 +55,41 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
             Description = Config.Strings.ContributeMsg,
             Color = EmbedColors.Normal
         };
+        
+        await RespondAsync(embed: embed.Build(), ephemeral: true);
+    }
+
+    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [SlashCommand("status", "Shows the bot's compute usage (CPU, RAM, ...)")]
+    public async Task Status()
+    {
+        
+        Process botProcess = Process.GetCurrentProcess();
+        float ramUsedInGigabytes = botProcess.WorkingSet64 / (float) Math.Pow(1024, 3);
+        TimeSpan totalProcessorTime = botProcess.TotalProcessorTime;
+
+        // Calculate the CPU usage
+        var startTime = DateTime.UtcNow;
+        var startCpuUsage = botProcess.TotalProcessorTime;
+
+        await Task.Delay(500);
+
+        var endTime = DateTime.UtcNow;
+        var endCpuUsage = botProcess.TotalProcessorTime;
+
+        float cpuUsage = (float) (endCpuUsage - startCpuUsage).TotalMilliseconds / (float) (Environment.ProcessorCount * (endTime - startTime).TotalMilliseconds);
+
+        var embed = new EmbedBuilder
+        {
+            Title = "Bot Status",
+            Color = EmbedColors.Normal,
+            Description = "The current bot compute status",
+        };
+
+        embed
+            .AddField("RAM", ramUsedInGigabytes)
+            .AddField("CPU Usage", $"{cpuUsage * 100}%")
+            .AddField("Total Processor Time", totalProcessorTime);
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
