@@ -87,7 +87,7 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
         };
 
         embed
-            .AddField("RAM", ramUsedInGigabytes)
+            .AddField("RAM", $"{ramUsedInGigabytes} GB")
             .AddField("CPU Usage", $"{cpuUsage * 100}%")
             .AddField("Total Processor Time", totalProcessorTime);
         
