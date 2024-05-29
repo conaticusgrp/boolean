@@ -60,13 +60,11 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
     }
 
     [DefaultMemberPermissions(GuildPermission.Administrator)]
-    [SlashCommand("status", "Shows the bot's compute usage (CPU, RAM, ...)")]
+    [SlashCommand("status", "Shows the bot's compute usage (CPU, RAM, etc)")]
     public async Task Status()
     {
-        
-        Process botProcess = Process.GetCurrentProcess();
-        float ramUsedInGigabytes = botProcess.WorkingSet64 / (float) Math.Pow(1024, 3);
-        TimeSpan totalProcessorTime = botProcess.TotalProcessorTime;
+        var botProcess = Process.GetCurrentProcess();
+        var ramUsageGb = botProcess.WorkingSet64 / (float) Math.Pow(1024, 3);
 
         // Calculate the CPU usage
         var startTime = DateTime.UtcNow;
@@ -77,19 +75,21 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
         var endTime = DateTime.UtcNow;
         var endCpuUsage = botProcess.TotalProcessorTime;
 
-        float cpuUsage = (float) (endCpuUsage - startCpuUsage).TotalMilliseconds / (float) (Environment.ProcessorCount * (endTime - startTime).TotalMilliseconds);
+        var cpuUsage = (float) (endCpuUsage - startCpuUsage).TotalMilliseconds
+                       / (float) (Environment.ProcessorCount * (endTime - startTime).TotalMilliseconds);
 
         var embed = new EmbedBuilder
         {
             Title = "Bot Status",
             Color = EmbedColors.Normal,
-            Description = "The current bot compute status",
         };
+        
+        var uptime = DateTime.Now - botProcess.StartTime;
 
         embed
-            .AddField("RAM", $"{ramUsedInGigabytes} GB")
-            .AddField("CPU Usage", $"{cpuUsage * 100}%")
-            .AddField("Total Processor Time", totalProcessorTime);
+            .AddField("RAM", $"`{Math.Round(ramUsageGb, 2)} GB`", true)
+            .AddField("CPU Usage", $"`{Math.Round(cpuUsage * 100, 2)}%`", true)
+            .AddField("Up Time", $"{uptime.Days} days, {uptime.Hours} hours, {uptime.Minutes} minutes, {uptime.Seconds} seconds", false);
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
     }
