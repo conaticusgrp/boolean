@@ -106,7 +106,9 @@ public class EventHandlers(
    public async Task ReactionAdded(Cacheable<IUserMessage, ulong> cachedMessage,
        Cacheable<IMessageChannel, ulong> originChannel, SocketReaction reaction)
    {
-       if (reaction.Emote.Name != Config.Emojis.Star)
+       var message = await cachedMessage.GetOrDownloadAsync();
+           
+       if (reaction.Emote.Name != Config.Emojis.Star || message.Author.IsBot)
            return;
        
        // Message IDs are unique across discord yay
@@ -116,7 +118,6 @@ public class EventHandlers(
            .FirstOrDefaultAsync(sr => sr.MessageSnowflake == cachedMessage.Id);
        
        if (starReaction != null) {
-           var message = await cachedMessage.GetOrDownloadAsync();
            await HandleExistingStarReaction(db, message, starReaction);
            return;
        }
@@ -189,7 +190,9 @@ public class EventHandlers(
    public async Task ReactionRemoved(Cacheable<IUserMessage, ulong> cachedMessage,
        Cacheable<IMessageChannel, ulong> originChannel, SocketReaction reaction)
    {
-       if (reaction.Emote.Name != Config.Emojis.Star)
+       var message = await cachedMessage.GetOrDownloadAsync();
+       
+       if (reaction.Emote.Name != Config.Emojis.Star || message.Author.IsBot)
            return;
        
        var db = serviceProvider.GetRequiredService<DataContext>();
