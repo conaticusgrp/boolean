@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using Boolean.Util;
 using Discord;
 using Discord.Interactions;
@@ -70,6 +71,16 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
         var startTime = DateTime.UtcNow;
         var startCpuUsage = botProcess.TotalProcessorTime;
 
+        NetworkInterface[] networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+        float startBytesSent = 0;
+        float startBytesReceived = 0;
+
+        foreach (NetworkInterface networkInterface in networkInterfaces) {
+            startBytesSent += networkInterface.GetIPv4Statistics().BytesSent;
+            startBytesReceived += networkInterface.GetIPv4Statistics().BytesReceived;
+        }
+
         await Task.Delay(500);
 
         var endTime = DateTime.UtcNow;
@@ -77,6 +88,20 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
 
         var cpuUsage = (float) (endCpuUsage - startCpuUsage).TotalMilliseconds
                        / (float) (Environment.ProcessorCount * (endTime - startTime).TotalMilliseconds);
+
+        float endBytesSent = 0;
+        float endBytesReceived = 0;
+
+        foreach (NetworkInterface networkInterface in networkInterfaces) {
+            endBytesSent += networkInterface.GetIPv4Statistics().BytesSent;
+            endBytesReceived += networkInterface.GetIPv4Statistics().BytesReceived;
+        }
+
+        float megabytesSentPerSecond = ((endBytesSent - startBytesSent) / (float) Math.Pow(1024, 2)) 
+                                        / (float) (endTime - startTime).TotalSeconds;
+
+        float megabytesReceivedPerSecond = ((endBytesReceived - startBytesReceived) / (float) Math.Pow(1024, 2)) 
+                                        / (float) (endTime - startTime).TotalSeconds;
 
         var embed = new EmbedBuilder
         {
@@ -89,6 +114,9 @@ public class BotInfo(DiscordSocketClient client) : InteractionModuleBase<SocketI
         embed
             .AddField("RAM", $"`{Math.Round(ramUsageGb, 2)} GB`", true)
             .AddField("CPU Usage", $"`{Math.Round(cpuUsage * 100, 2)}%`", true)
+            .AddField("** **", "** **") // Empty line to display the following fields in a separate row
+            .AddField("MB/S Sent", $"`{Math.Round(megabytesSentPerSecond, 2)} MB/S`", true)
+            .AddField("MB/S Received", $"`{Math.Round(megabytesReceivedPerSecond, 2)} MB/S`", true)
             .AddField("Up Time", $"{uptime.Days} days, {uptime.Hours} hours, {uptime.Minutes} minutes, {uptime.Seconds} seconds", false);
         
         await RespondAsync(embed: embed.Build(), ephemeral: true);
