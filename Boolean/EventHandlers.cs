@@ -157,31 +157,32 @@ public class EventHandlers(
            return;
        }
        
+       // Send to starboard channel as it has reached the minimum stars threshold
+       
        var starboardChannel = await client.GetChannelAsync(dbStarboardChannel.Snowflake) as ITextChannel;
        var embed = new EmbedBuilder
        {
-           Title = "Message Link",
-           ThumbnailUrl = message.Author.GetAvatarUrl(),
            Color = EmbedColors.Normal,
-           Fields = [
-               new EmbedFieldBuilder
-               {
-                   Name = "Author",
-                   Value = message.Author.Username,
-                   IsInline = true,
-               },
-               
-               new EmbedFieldBuilder
-               {
-                   Name = "Message",
-                   Value = message.Content,
-                   IsInline = true,
-               },
-           ],
-           Url = message.GetJumpUrl(),
-       };
+           Description = $"{message.Content}\n\n[Message Link]({message.GetJumpUrl()})",
+           ImageUrl = message.Attachments.FirstOrDefault()?.Url,
+       }.WithAuthor(message.Author);
        
-       await starboardChannel.SendMessageAsync(embed: embed.Build());
+       // Add attachments
+       var attachments = message.Attachments.Skip(1);
+       var attachmentsLength = attachments.Count();
+       
+       Embed[] embeds = new Embed[attachmentsLength + 1];
+       embeds[0] = embed.Build();
+       
+       for (int i = 0; i < attachmentsLength; i++) {
+           embeds[i + 1] = new EmbedBuilder
+           {
+               ImageUrl = attachments.ElementAt(i).Url,
+               Color = EmbedColors.Normal,
+           }.Build();
+       }
+       
+       await starboardChannel.SendMessageAsync(embeds: embeds);
        
        starReaction.IsOnStarboard = true;
        await db.SaveChangesAsync();
