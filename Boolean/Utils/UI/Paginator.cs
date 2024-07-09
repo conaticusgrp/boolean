@@ -32,10 +32,21 @@ public class Paginator<T>(
     public async Task SendAsync()
     {
         var embed = pageChangeFunc(SlicePage(), CreateDefaultEmbed());
-        await interaction.RespondAsync(embed: embed.Build(), components: CreateButtons(true), ephemeral: true);
+        await interaction.RespondAsync(embed: embed.Build(), components: CreateButtonsForCurrentPage(), ephemeral: true);
         await PaginatorCache.Add(_id, this);
     }
     
+
+    private MessageComponent CreateButtonsForCurrentPage()
+    {
+        bool previousButtonDisabled = _currentPage == 0;
+
+        int numberOfPages = (int) MathF.Ceiling(data.Count / (float) itemsPerPage);
+        bool nextButtonDisabled = numberOfPages - 1 <= _currentPage;
+
+        return CreateButtons(previousButtonDisabled, nextButtonDisabled);
+    }
+
     private MessageComponent CreateButtons(bool isPreviousDisabled = false, bool isNextDisabled = false)
     {
         return new ComponentBuilder()
@@ -72,13 +83,7 @@ public class Paginator<T>(
         await interaction.ModifyOriginalResponseAsync(m =>
         {
             m.Embed = embed.Build();
-            
-            if (_currentPage + itemsPerPage + 1 > data.Count)
-                m.Components = CreateButtons(false, true);
-            else if (_currentPage == 0)
-                m.Components = CreateButtons(true);
-            else
-                m.Components = CreateButtons();
+            m.Components = CreateButtonsForCurrentPage();
         });
         
         await component.DeferAsync();
